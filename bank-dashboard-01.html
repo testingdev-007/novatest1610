@@ -153,7 +153,7 @@
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: #0F1340;
+      color: #FFFFFF;
       margin-bottom: 24px;
       font-variant-numeric: tabular-nums;
       position: relative; z-index: 1;
@@ -371,7 +371,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* ── CALC GRID ─────��────────────────────── */
+    /* ── CALC GRID ─────── */
     /* MAKEOVER? Squash your browser window to phone width. What happens here? */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   </style>
@@ -398,7 +398,7 @@
         <div class="account-name">Alex Chen · Current Account</div>
         <div class="account-pill">•••• 4821</div>
       </div>
-
+    </div>
 
     <!-- Money in / out summary -->
     <div class="stats-row">
@@ -418,7 +418,7 @@
       <div class="tx-item">
         <div class="tx-icon">☕</div>
         <div class="tx-meta">
-          <div class="tx-name">Costa Coffee</div>
+          <div class="tx-name">Costa Coffee — King’s Cross Station</div>
           <div class="tx-date">Today, 09:14</div>
         </div>
         <div class="tx-amount debit">−£3.80</div>
@@ -436,7 +436,7 @@
       <div class="tx-item">
         <div class="tx-icon">🛒</div>
         <div class="tx-meta">
-          <div class="tx-name">Tesco Express</div>
+          <div class="tx-name">Tesco Express — Oxford Street</div>
           <div class="tx-date">30 Jun, 18:32</div>
         </div>
         <div class="tx-amount debit">−£14.30</div>
@@ -445,7 +445,7 @@
       <div class="tx-item">
         <div class="tx-icon">🎵</div>
         <div class="tx-meta">
-          <div class="tx-name">Spotify</div>
+          <div class="tx-name">Spotify — Monthly Subscription</div>
           <div class="tx-date">28 Jun, 00:00</div>
         </div>
         <div class="tx-amount debit">−£9.99</div>
@@ -454,7 +454,7 @@
       <div class="tx-item">
         <div class="tx-icon">📦</div>
         <div class="tx-meta">
-          <div class="tx-name">Amazon</div>
+          <div class="tx-name">Amazon — Prime Housewares Order</div>
           <div class="tx-date">27 Jun, 14:21</div>
         </div>
         <div class="tx-amount debit">−£28.99</div>
@@ -472,7 +472,7 @@
         </div>
       </div>
 
-      <button class="btn" onlick="makeWithdrawal()">Withdraw</button>
+      <button class="btn" onclick="makeWithdrawal()">Withdraw</button>
 
       <!-- MAKEOVER? Do these messages work for someone who can't see colour? -->
       <div class="alert alert-ok"  id="wd-success"></div>
@@ -515,25 +515,51 @@
   <script>
     let balance = 1250;
 
+    function addTransaction(amount, description, dateText) {
+      const transactionsCard = document.querySelector('.card .card-title').parentElement;
+      const txList = transactionsCard;
+      const newTx = document.createElement('div');
+      newTx.className = 'tx-item';
+      newTx.innerHTML = `
+        <div class="tx-icon">↘</div>
+        <div class="tx-meta">
+          <div class="tx-name">${description}</div>
+          <div class="tx-date">${dateText}</div>
+        </div>
+        <div class="tx-amount debit">−£${amount.toFixed(2)}</div>
+      `;
+      txList.appendChild(newTx);
+    }
+
     function makeWithdrawal() {
       const successEl = document.getElementById("wd-success");
       const errorEl   = document.getElementById("wd-error");
+      const inputEl   = document.getElementById("withdraw-amount");
+      const amount    = parseFloat(inputEl.value);
 
       successEl.style.display = "none";
       errorEl.style.display   = "none";
 
-      const amount = parseFloat(document.getElementById("withdraw-amount").value);
+      if (Number.isNaN(amount) || amount <= 0) {
+        errorEl.textContent = "Please enter a valid withdrawal amount.";
+        errorEl.style.display = "block";
+        return;
+      }
 
-      // Update the balance
-      balance = balance + amount;
+      if (amount > balance) {
+        errorEl.textContent = "You do not have enough money for that withdrawal.";
+        errorEl.style.display = "block";
+        return;
+      }
 
-      // Show the new balance on the hero card
-      document.getElementById("balence-display").textContent =
-        "£" + balance.toFixed(2);
+      balance = balance - amount;
+      document.getElementById("balance-display").textContent = "£" + balance.toFixed(2);
 
-      successEl.style.display  = "block";
-      successEl.textContent    =
-        "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
+      addTransaction(amount, "Cash Withdrawal — NovaPay ATM", "Today, just now");
+
+      successEl.style.display = "block";
+      successEl.textContent = "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
+      inputEl.value = "";
     }
 
     function calculateInterest() {
