@@ -129,7 +129,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label" for="int-rate">Interest Rate</label>
+          <label class="field-label" for="int-rate">Annual Interest Rate</label>
           <div class="input-wrap">
             <span class="input-prefix">%</span>
             <input type="number" id="int-rate" placeholder="4.5">
@@ -138,7 +138,7 @@
       </div>
       <button class="btn btn-ghost" type="button" id="calc-btn">Calculate</button>
       <div class="result-box" id="int-result-box">
-        <div class="result-eyebrow">Interest earned over 12 months</div>
+        <div class="result-eyebrow">Simple interest earned over 12 months (annual rate)</div>
         <div class="result-figure" id="int-result-figure"></div>
       </div>
     </div>
@@ -267,7 +267,7 @@
       const principal = parseFloat(document.getElementById("int-amount").value);
       const rate = parseFloat(document.getElementById("int-rate").value);
       if (isNaN(principal) || isNaN(rate)) {
-        showToast("Error: please enter both an amount and an interest rate.", "error");
+        showToast("Error: please enter both an amount and an annual interest rate.", "error");
         return;
       }
       const interest = principal * (rate / 100); // 12 months = 1 year of simple interest
