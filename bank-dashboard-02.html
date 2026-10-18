@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <title>NovaPay Pro — Dashboard</title>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  WEBSITE MAKEOVER — NOVAPAY PRO EDITION                      ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║  NovaPay has launched a Pro dashboard. It looks polished,    ║
+    ║  but it has a mix of problems:                               ║
+    ║                                                              ║
+    ║   • BUGS       – broken features and wrong answers           ║
+    ║   • DATA FLOW  – numbers that don't agree with each other    ║
+    ║   • ACCESS     – things some people can't use                ║
+    ║   • RESPONSIVE – things that break on a phone                ║
+    ║   • UX / UI    – works, but a thoughtful designer would      ║
+    ║                  do it differently                           ║
+    ║                                                              ║
+    ║  Some problems only appear after you do things in a certain  ║
+    ║  ORDER. Test like a detective: change one thing, retest.     ║
+    ║                                                              ║
+    ║  Everything you need is in THIS file. Nothing is hidden and  ║
+    ║  nothing needs installing. Check the Console (F12) too.      ║
+    ║                                                              ║
+    ║  Goal: a working, accessible, responsive GOLD STANDARD page. ║
+    ║  Tiers: ★ Medium  ★★ Hard  ★★★ Very hard  ✦ Stretch        ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #F0F2F8;
+      --card:         #FFFFFF;
+      --hero-from:    #0F1340;
+      --hero-to:      #2D1B69;
+      --accent:       #6C63FF;
+      --accent-light: #EEEEFF;
+      --text:         #0D0F1C;
+      --muted:        #B4B9C8;
+      --border:       #E8ECF2;
+      --debit:        #FF4757;
+      --credit:       #00C896;
+      --shadow:       0 2px 12px rgba(13,15,28,0.08);
+      --r:            16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 48px;
+    }
+
+    button, input, select { font: inherit; outline: none; }
+
+    .app-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--hero-from);
+    }
+    .app-logo { font-size: 22px; font-weight: 800; color: #fff; }
+    .app-logo span { color: var(--accent); }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
+      width: 28px; height: 28px; border: 0; border-radius: 8px;
+      background: rgba(255,255,255,0.12); cursor: pointer;
+    }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+
+    .main { width: 720px; margin: 24px auto; }
+
+    .balance-hero {
+      border-radius: var(--r); padding: 28px; color: #fff;
+      background: linear-gradient(135deg, var(--hero-from), var(--hero-to));
+      margin-bottom: 16px;
+    }
+    .balance-top { display: flex; justify-content: space-between; align-items: center; }
+    .balance-eyebrow { font-size: 12px; color: #6f74a0; text-transform: uppercase; letter-spacing: 1px; }
+    .link-btn { background: none; border: 0; color: #6f74a0; cursor: pointer; font-size: 12px; }
+    .balance-amount { font-size: 64px; font-weight: 800; white-space: nowrap; margin: 8px 0; }
+    .balance-footer { display: flex; justify-content: space-between; font-size: 13px; color: #6f74a0; }
+
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .stat-card, .card {
+      background: var(--card); border-radius: var(--r);
+      box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px;
+    }
+    .stat-card { margin-bottom: 0; }
+    .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; }
+    .stat-value { font-size: 24px; font-weight: 700; margin-top: 6px; }
+    .income { color: var(--credit); }
+    .outgo  { color: var(--debit); }
+
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .tab {
+      padding: 4px 10px; border-radius: 20px; font-size: 12px;
+      background: var(--accent-light); color: var(--accent);
+      border: 0; cursor: pointer;
+    }
+    .tab.active { background: var(--accent); color: #fff; }
+    .search { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+
+    .tx-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .tx-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; }
+    .tx-meta { flex: 1; }
+    .tx-name { font-weight: 600; font-size: 14px; }
+    .tx-date { font-size: 12px; color: var(--muted); }
+    .tx-amount { font-weight: 700; }
+    .tx-amount.credit { color: var(--credit); }
+    .tx-amount.debit  { color: var(--debit); }
+    .tx-footer { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    .goal-bar { height: 12px; border-radius: 6px; background: var(--accent-light); overflow: hidden; }
+    .goal-fill { height: 100%; background: var(--accent); }
+    .goal-text { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+    .field { margin-bottom: 14px; }
+    .field-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+    .input-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
+    .input-prefix { color: var(--muted); margin-right: 6px; }
+    .input-wrap input, .input-wrap select { flex: 1; border: 0; padding: 10px 0; font-size: 15px; background: transparent; min-width: 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    .btn {
+      padding: 8px 16px; border: 0; border-radius: 8px;
+      background: var(--accent); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .btn-ghost { background: var(--accent-light); color: var(--accent); }
+
+    .alert { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px; }
+    .alert-ok  { background: #E6FAF4; color: #00C896; }
+    .alert-err { background: #FFECEE; color: #FF4757; }
+
+    .result-box { display: none; margin-top: 16px; padding: 16px; border-radius: 10px; background: var(--accent-light); }
+    .result-eyebrow { font-size: 12px; color: var(--muted); }
+    .result-figure { font-size: 28px; font-weight: 800; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-logo">nova<span>pay</span> Pro</div>
+    <div class="header-actions">
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">⚙️</button>
+      <div class="avatar">AC</div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="balance-hero">
+      <div class="balance-top">
+        <div class="balance-eyebrow">Current Balance</div>
+        <button class="link-btn" onclick="toggleBalance()">Hide</button>
+      </div>
+      <div class="balance-amount" id="balance-display">£1,250.00</div>
+      <div class="balance-footer">
+        <div>Alex Chen · Current Account</div>
+        <div>•••• 4821</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Money In</div>
+        <div class="stat-value income" id="stat-in"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Money Out</div>
+        <div class="stat-value outgo" id="stat-out"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Savings Goal — Summer Trip</div>
+      <div class="goal-bar"><div class="goal-fill" id="goal-fill"></div></div>
+      <div class="goal-text" id="goal-text"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recent Transactions</div>
+
+      <div class="toolbar">
+        <button class="tab active" id="tab-all" onclick="setFilter('all')">All</button>
+        <button class="tab" id="tab-in" onclick="setFilter('in')">In</button>
+        <button class="tab" id="tab-out" onclick="setFilter('out')">Out</button>
+        <input class="search" id="tx-search" placeholder="Search" oninput="renderTransactions()">
+      </div>
+
+      <div id="tx-list"></div>
+      <div class="tx-footer" id="tx-summary"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Withdraw Funds</div>
+      <p class="goal-text" style="margin:0 0 12px">Daily limit: £500.00</p>
+
+      <div class="field">
+        <div class="field-label">Amount</div>
+        <div class="input-wrap">
+          <span class="input-prefix">£</span>
+          <input type="text" id="withdraw-amount" placeholder="0.00">
+        </div>
+      </div>
+
+      <button class="btn" onclick="makeWithdrawal()">Withdraw</button>
+
+      <div class="alert alert-ok"  id="wd-success"></div>
+      <div class="alert alert-err" id="wd-error"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Savings Calculator</div>
+      <p class="goal-text" style="margin:0 0 12px">See what your savings could grow to, with interest added monthly.</p>
+
+      <div class="two-col">
+        <div class="field">
+          <div class="field-label">Amount</div>
+          <div class="input-wrap">
+            <span class="input-prefix">£</span>
+            <input type="number" id="int-amount" placeholder="1000">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Rate</div>
+          <div class="input-wrap">
+            <span class="input-prefix">%</span>
+            <input type="number" id="int-rate" placeholder="4.5">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Years</div>
+          <div class="input-wrap">
+            <input type="number" id="int-years" placeholder="2">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-ghost" onclick="calculateInterest()">Calculate</button>
+
+      <div class="result-box" id="int-result-box">
+        <div class="result-eyebrow">Interest earned</div>
+        <div class="result-figure" id="int-result-figure"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const DAILY_LIMIT = 500;
+    const GOAL = { target: 800, saved: 496 };
+
+    let balance = 1250;
+    let withdrawnToday = 0;
+    let filter = "all";
+    let balanceVisible = true;
+    let shownText = "";
+
+    const transactions = [
+      { name: "Costa Coffee",      icon: "☕", date: "Today, 09:14", amount: -3.80,    type: "credit" },
+      { name: "Salary — Acme Ltd", icon: "💷", date: "1 Jul, 08:00", amount: 2450.00,  type: "credit" },
+      { name: "Tesco Express",     icon: "🛒", date: "30 Jun, 18:32", amount: -14.30,  type: "debit"  },
+      { name: "Spotify",           icon: "🎵", date: "28 Jun, 00:00", amount: -9.99,   type: "debit"  },
+      { name: "Amazon",            icon: "📦", date: "27 Jun, 14:21", amount: -28.99,  type: "debit"  }
+    ];
+
+    function formatMoney(n) {
+      return "£" + n.toFixed(2);
+    }
+
+    function renderStats() {
+      let moneyIn = 0, moneyOut = 0;
+      transactions.forEach(t => {
+        if (t.amount > 0) moneyIn += t.amount;
+        else moneyOut += t.amount;
+      });
+      document.getElementById("stat-in").textContent  = "+" + formatMoney(moneyIn);
+      document.getElementById("stat-out").textContent = "−" + formatMoney(moneyOut);
+    }
+
+    function renderGoal() {
+      const progress = GOAL.saved / GOAL.target;
+      document.getElementById("goal-fill").style.width = progress + "%";
+      document.getElementById("goal-text").textContent =
+        formatMoney(GOAL.saved) + " of " + formatMoney(GOAL.target) + " saved";
+      console.warn("Goal progress:", progress);
+    }
+
+    function renderTransactions() {
+      const query = document.getElementById("tx-search").value;
+
+      const visible = transactions.filter(t => {
+        const matchesTab = filter === "all" || t.type === filter;
+        const matchesSearch = t.name.includes(query);
+        return matchesTab && matchesSearch;
+      });
+
+      document.getElementById("tx-list").innerHTML = visible.map(t => `
+        <div class="tx-item">
+          <div class="tx-icon">${t.icon}</div>
+          <div class="tx-meta">
+            <div class="tx-name">${t.name}</div>
+            <div class="tx-date">${t.date}</div>
+          </div>
+          <div class="tx-amount ${t.type}">${t.amount > 0 ? "+" : "−"}${formatMoney(Math.abs(t.amount))}</div>
+        </div>`).join("");
+
+      document.getElementById("tx-count").textContent =
+        "Showing " + visible.length + " of " + transactions.length + " transactions";
+    }
+
+    function setFilter(next) {
+      filter = next;
+      renderTransactions();
+    }
+
+    function updateBalanceDisplay() {
+      document.getElementById("balance-display").textContent = formatMoney(balance);
+    }
+
+    function toggleBalance() {
+      const el = document.getElementById("balance-display");
+      if (balanceVisible) {
+        shownText = el.textContent;
+        el.textContent = "••••••";
+      } else {
+        el.textContent = shownText;
+      }
+      balanceVisible = !balanceVisible;
+    }
+
+    function makeWithdrawal() {
+      const successEl = document.getElementById("wd-success");
+      const errorEl   = document.getElementById("wd-error");
+
+      successEl.style.display = "none";
+      errorEl.style.display   = "none";
+
+      const amount = parseFloat(document.getElementById("withdraw-amount").value);
+
+      if (isNaN(amount)) {
+        errorEl.style.display = "block";
+        errorEl.textContent = "Please enter an amount.";
+        return;
+      }
+
+      withdrawnToday += amount;
+
+      if (withdrawnToday > DAILY_LIMIT) {
+        errorEl.style.display = "block";
+        errorEl.textContent = "Daily limit of " + formatMoney(DAILY_LIMIT) + " reached.";
+        return;
+      }
+
+      if (amount > balance) {
+        errorEl.style.display = "block";
+        errorEl.textContent = "Insufficient funds.";
+        return;
+      }
+
+      balance = balance - amount;
+      updateBalanceDisplay();
+
+      transactions.unshift({
+        name: "Cash withdrawal", icon: "🏧", date: "Just now",
+        amount: -amount, type: "debit"
+      });
+      renderTransactions();
+
+      successEl.style.display = "block";
+      successEl.textContent =
+        "Withdrawn " + formatMoney(amount) + ". New balance: " + formatMoney(balance);
+
+      setTimeout(() => { successEl.style.display = "none"; errorEl.style.display = "none"; }, 1500);
+    }
+
+    function calculateInterest() {
+      const principal = parseFloat(document.getElementById("int-amount").value);
+      const rate      = parseFloat(document.getElementById("int-rate").value);
+      const years     = parseFloat(document.getElementById("int-years").value);
+
+      const total = principal * Math.pow(1 + rate / 12, 12 * years);
+
+      document.getElementById("int-result-box").style.display = "block";
+      document.getElementById("int-result-figure").textContent = formatMoney(total);
+    }
+
+    renderStats();
+    renderGoal();
+    renderTransactions();
+  </script>
+
+</body>
+</html>
