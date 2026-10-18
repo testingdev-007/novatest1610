@@ -82,13 +82,14 @@
 
     /* MAKEOVER? These buttons are small and have no hover or focus style. */
     .icon-btn {
-      width: 28px; height: 28px;
+      width: 44px; height: 44px;
       border: none; border-radius: 50%;
       background: var(--bg);
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8em;
       cursor: pointer;
     }
+    .icon-btn:hover { background: var(--accent-light); }
 
     .avatar {
       width: 36px; height: 36px;
@@ -263,8 +264,8 @@
 
     /* MAKEOVER? Is this date easy to read? */
     .tx-date {
-      font-size: 0.65em;
-      color: var(--muted);
+      font-size: 0.8em;
+      color: #6B7186;
       margin-top: 3px;
     }
 
@@ -312,8 +313,9 @@
       font-family: inherit;
       color: var(--text);
       background: var(--bg);
-      outline: none;
     }
+    input:focus { border-color: var(--accent); }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
     .btn {
       display: block;
@@ -327,8 +329,9 @@
       letter-spacing: 0.02em;
       background: var(--accent);
       color: white;
-      cursor: default;
+      cursor: pointer;
     }
+    .btn:hover { filter: brightness(1.1); }
 
     .btn-ghost {
       background: var(--accent-light);
@@ -343,6 +346,7 @@
       font-size: 0.88em;
       font-weight: 500;
       display: none;
+      font-weight: 600;
     }
     .alert-ok  { background: #E6FAF3; color: #00804E; border: 1px solid #B0EDCF; }
     .alert-err { background: #FFF0F1; color: #BF1030; border: 1px solid #FFB8C1; }
@@ -374,6 +378,12 @@
     /* ── CALC GRID ─────── */
     /* MAKEOVER? Squash your browser window to phone width. What happens here? */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) {
+      .two-col { grid-template-columns: 1fr; }
+      .balance-amount { font-size: 2.2em; }
+      .stats-row { grid-template-columns: 1fr; }
+      .app-header { padding: 0 12px; }
+    }
   </style>
 </head>
 <body>
@@ -382,9 +392,9 @@
     <div class="app-logo">nova<span>pay</span></div>
     <div class="header-actions">
       <!-- MAKEOVER? What would a screen reader say about these buttons? -->
-      <button class="icon-btn">🔔</button>
-      <button class="icon-btn">⚙️</button>
-      <div class="avatar">AC</div>
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <button class="icon-btn" aria-label="Settings">⚙️</button>
+      <div class="avatar" role="img" aria-label="Alex Chen">AC</div>
     </div>
   </header>
 
@@ -393,7 +403,7 @@
     <!-- Balance card -->
     <div class="balance-hero">
       <div class="balance-eyebrow">Current Balance</div>
-      <div class="balance-amount" id="balance-display">£1,250.00</div>
+      <div class="balance-amount" id="balance-display" aria-live="polite"></div>
       <div class="balance-footer">
         <div class="account-name">Alex Chen · Current Account</div>
         <div class="account-pill">•••• 4821</div>
@@ -404,61 +414,17 @@
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-label">Money In</div>
-        <div class="stat-value income">+£2,450.00</div>
+        <div class="stat-value income" id="stat-in"></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Money Out</div>
-        <div class="stat-value outgo">−£56.27</div>
+        <div class="stat-value outgo" id="stat-out"></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Recent Transactions</div>
-
-      <div class="tx-item">
-        <div class="tx-icon">☕</div>
-        <div class="tx-meta">
-          <div class="tx-name">Costa Coffee — King’s Cross Station</div>
-          <div class="tx-date">Today, 09:14</div>
-        </div>
-        <div class="tx-amount debit">−£3.80</div>
-      </div>
-
-      <div class="tx-item">
-        <div class="tx-icon">💷</div>
-        <div class="tx-meta">
-          <div class="tx-name">Salary — Acme Ltd</div>
-          <div class="tx-date">1 Jul, 08:00</div>
-        </div>
-        <div class="tx-amount credit">+£2,450.00</div>
-      </div>
-
-      <div class="tx-item">
-        <div class="tx-icon">🛒</div>
-        <div class="tx-meta">
-          <div class="tx-name">Tesco Express — Oxford Street</div>
-          <div class="tx-date">30 Jun, 18:32</div>
-        </div>
-        <div class="tx-amount debit">−£14.30</div>
-      </div>
-
-      <div class="tx-item">
-        <div class="tx-icon">🎵</div>
-        <div class="tx-meta">
-          <div class="tx-name">Spotify — Monthly Subscription</div>
-          <div class="tx-date">28 Jun, 00:00</div>
-        </div>
-        <div class="tx-amount debit">−£9.99</div>
-      </div>
-
-      <div class="tx-item">
-        <div class="tx-icon">📦</div>
-        <div class="tx-meta">
-          <div class="tx-name">Amazon — Prime Housewares Order</div>
-          <div class="tx-date">27 Jun, 14:21</div>
-        </div>
-        <div class="tx-amount debit">−£28.99</div>
-      </div>
+      <div id="tx-list"></div>
     </div>
 
     <div class="card">
@@ -468,15 +434,15 @@
         <label class="field-label" for="withdraw-amount">Amount</label>
         <div class="input-wrap">
           <span class="input-prefix">£</span>
-          <input type="text" id="withdraw-amount" placeholder="0.00">
+          <input type="text" inputmode="decimal" id="withdraw-amount" placeholder="0.00">
         </div>
       </div>
 
-      <button class="btn" onclick="makeWithdrawal()">Withdraw</button>
+      <button class="btn" type="button" onclick="makeWithdrawal()">Withdraw</button>
 
       <!-- MAKEOVER? Do these messages work for someone who can't see colour? -->
-      <div class="alert alert-ok"  id="wd-success"></div>
-      <div class="alert alert-err" id="wd-error"></div>
+      <div class="alert alert-ok" id="wd-success" role="status"></div>
+      <div class="alert alert-err" id="wd-error" role="alert"></div>
     </div>
 
     <div class="card">
@@ -487,24 +453,24 @@
 
       <div class="two-col">
         <div class="field">
-          <label class="field-label">Amount</label>
+          <label class="field-label" for="int-amount">Amount</label>
           <div class="input-wrap">
             <span class="input-prefix">£</span>
-            <input type="number" id="int-amount" placeholder="1000">
+            <input type="number" id="int-amount" placeholder="1000" min="0" step="any">
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Interest Rate</label>
+          <label class="field-label" for="int-rate">Interest Rate (% per year)</label>
           <div class="input-wrap">
             <span class="input-prefix">%</span>
-            <input type="number" id="int-rate" placeholder="4.5">
+            <input type="number" id="int-rate" placeholder="4.5" min="0" step="any">
           </div>
         </div>
       </div>
 
-      <button class="btn btn-ghost" onclick="calculateInterest()">Calculate</button>
+      <button class="btn btn-ghost" type="button" onclick="calculateInterest()">Calculate</button>
 
-      <div class="result-box" id="int-result-box">
+      <div class="result-box" id="int-result-box" role="status">
         <div class="result-eyebrow">Interest earned over 12 months</div>
         <div class="result-figure" id="int-result-figure"></div>
       </div>
@@ -515,64 +481,112 @@
   <script>
     let balance = 1250;
 
-    function addTransaction(amount, description, dateText) {
-      const transactionsCard = document.querySelector('.card .card-title').parentElement;
-      const txList = transactionsCard;
-      const newTx = document.createElement('div');
-      newTx.className = 'tx-item';
-      newTx.innerHTML = `
-        <div class="tx-icon">↘</div>
-        <div class="tx-meta">
-          <div class="tx-name">${description}</div>
-          <div class="tx-date">${dateText}</div>
-        </div>
-        <div class="tx-amount debit">−£${amount.toFixed(2)}</div>
-      `;
-      txList.appendChild(newTx);
+    const gbp = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+    const fmt = n => gbp.format(n);
+
+    // amount: negative = money out, positive = money in
+    const transactions = [
+      { icon: '☕', name: 'Costa Coffee — King’s Cross Station', amount: -3.80,   date: new Date('2026-10-18T09:14') },
+      { icon: '💷', name: 'Salary — Acme Ltd',                    amount: 2450.00, date: new Date('2026-07-01T08:00') },
+      { icon: '🛒', name: 'Tesco Express — Oxford Street',        amount: -14.30,  date: new Date('2026-06-30T18:32') },
+      { icon: '🎵', name: 'Spotify — Monthly Subscription',       amount: -9.99,   date: new Date('2026-06-28T00:00') },
+      { icon: '📦', name: 'Amazon — Prime Housewares Order',      amount: -28.99,  date: new Date('2026-06-27T14:21') },
+    ];
+
+    const round2 = n => Math.round(n * 100) / 100;
+
+    function formatDate(d) {
+      const now = new Date();
+      const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      if (d.toDateString() === now.toDateString()) return `Today, ${time}`;
+      const opts = { day: 'numeric', month: 'short' };
+      if (d.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+      return `${d.toLocaleDateString('en-GB', opts)}, ${time}`;
+    }
+
+    function renderTransactions() {
+      const list = document.getElementById('tx-list');
+      list.innerHTML = '';
+      [...transactions]
+        .sort((a, b) => b.date - a.date)
+        .forEach(t => {
+          const isDebit = t.amount < 0;
+          const item = document.createElement('div');
+          item.className = 'tx-item';
+          item.innerHTML = `
+            <div class="tx-icon" aria-hidden="true"></div>
+            <div class="tx-meta">
+              <div class="tx-name"></div>
+              <div class="tx-date"></div>
+            </div>
+            <div class="tx-amount ${isDebit ? 'debit' : 'credit'}"></div>`;
+          item.querySelector('.tx-icon').textContent = t.icon;
+          item.querySelector('.tx-name').textContent = t.name;
+          item.querySelector('.tx-date').textContent = formatDate(t.date);
+          item.querySelector('.tx-amount').textContent =
+            (isDebit ? '−' : '+') + fmt(Math.abs(t.amount));
+          list.appendChild(item);
+        });
+
+      const moneyIn  = transactions.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
+      const moneyOut = transactions.filter(t => t.amount < 0).reduce((s, t) => s - t.amount, 0);
+      document.getElementById('stat-in').textContent  = '+' + fmt(round2(moneyIn));
+      document.getElementById('stat-out').textContent = '−' + fmt(round2(moneyOut));
+    }
+
+    function renderBalance() {
+      document.getElementById('balance-display').textContent = fmt(balance);
     }
 
     function makeWithdrawal() {
-      const successEl = document.getElementById("wd-success");
-      const errorEl   = document.getElementById("wd-error");
-      const inputEl   = document.getElementById("withdraw-amount");
-      const amount    = parseFloat(inputEl.value);
+      const successEl = document.getElementById('wd-success');
+      const errorEl   = document.getElementById('wd-error');
+      const inputEl   = document.getElementById('withdraw-amount');
+      const amount    = round2(parseFloat(inputEl.value));
 
-      successEl.style.display = "none";
-      errorEl.style.display   = "none";
+      successEl.style.display = 'none';
+      errorEl.style.display   = 'none';
 
       if (Number.isNaN(amount) || amount <= 0) {
-        errorEl.textContent = "Please enter a valid withdrawal amount.";
-        errorEl.style.display = "block";
+        errorEl.textContent = '⚠ Error: Please enter a valid withdrawal amount.';
+        errorEl.style.display = 'block';
         return;
       }
 
       if (amount > balance) {
-        errorEl.textContent = "You do not have enough money for that withdrawal.";
-        errorEl.style.display = "block";
+        errorEl.textContent = '⚠ Error: You do not have enough money for that withdrawal.';
+        errorEl.style.display = 'block';
         return;
       }
 
-      balance = balance - amount;
-      document.getElementById("balance-display").textContent = "£" + balance.toFixed(2);
+      balance = round2(balance - amount);
+      transactions.push({ icon: '↘', name: 'Cash Withdrawal — NovaPay ATM', amount: -amount, date: new Date() });
 
-      addTransaction(amount, "Cash Withdrawal — NovaPay ATM", "Today, just now");
+      renderBalance();
+      renderTransactions();
 
-      successEl.style.display = "block";
-      successEl.textContent = "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
-      inputEl.value = "";
+      successEl.textContent = `✔ Success: Withdrawn ${fmt(amount)}. New balance: ${fmt(balance)}`;
+      successEl.style.display = 'block';
+      inputEl.value = '';
     }
 
     function calculateInterest() {
-      const principal = parseFloat(document.getElementById("int-amount").value);
-      const rate      = parseFloat(document.getElementById("int-rate").value);
+      const principal = parseFloat(document.getElementById('int-amount').value);
+      const rate      = parseFloat(document.getElementById('int-rate').value);
+      const box = document.getElementById('int-result-box');
+      const out = document.getElementById('int-result-figure');
 
-      const interest = principal * rate * 12;
-
-      const box = document.getElementById("int-result-box");
-      box.style.display = "block";
-      document.getElementById("int-result-figure").textContent =
-        "£" + interest.toFixed(2);
+      box.style.display = 'block';
+      if (Number.isNaN(principal) || Number.isNaN(rate) || principal < 0 || rate < 0) {
+        out.textContent = 'Enter a valid amount and rate';
+        return;
+      }
+      // Simple interest over 12 months: rate is a yearly percentage
+      out.textContent = fmt(principal * (rate / 100));
     }
+
+    renderBalance();
+    renderTransactions();
   </script>
 
 </body>
