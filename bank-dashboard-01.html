@@ -153,7 +153,7 @@
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: #0F1340;
+      color: white;
       margin-bottom: 24px;
       font-variant-numeric: tabular-nums;
       position: relative; z-index: 1;
@@ -371,7 +371,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* ── CALC GRID ─────��────────────────────── */
+    /* ── CALC GRID ─────── */
     /* MAKEOVER? Squash your browser window to phone width. What happens here? */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   </style>
@@ -398,6 +398,7 @@
         <div class="account-name">Alex Chen · Current Account</div>
         <div class="account-pill">•••• 4821</div>
       </div>
+    </div>
 
 
     <!-- Money in / out summary -->
@@ -528,7 +529,7 @@
       balance = balance + amount;
 
       // Show the new balance on the hero card
-      document.getElementById("balence-display").textContent =
+      document.getElementById("balance-display").textContent =
         "£" + balance.toFixed(2);
 
       successEl.style.display  = "block";
