@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay — Timetable</title>
+  <style>
+    :root {
+      --bg: #f4f5f9;
+      --card: #ffffff;
+      --ink: #1a1d29;
+      --text: #374151;
+      --muted: #5b6270;
+      --border: #d8dce6;
+      --accent: #5a50e0;
+      --accent-2: #1d6fa8;
+      --tint: #eeedfb;
+      --good: #0f8a5f;
+      --shadow: 0 18px 40px rgba(26, 29, 41, 0.1);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      padding: 28px 16px 56px;
+      background:
+        radial-gradient(circle at top left, rgba(90,80,224,0.13), transparent 30%),
+        radial-gradient(circle at top right, rgba(29,111,168,0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .skip:focus { left: 8px; z-index: 10; }
+
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    nav.top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    nav.top a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    nav.top a[aria-current="page"] { background: var(--tint); }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #11152a 0%, #1f2350 55%, #5a50e0 100%);
+      color: #fff;
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #d7d4ff;
+      margin-bottom: 10px;
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+    .lede {
+      max-width: 68ch;
+      color: rgba(255,255,255,0.92);
+      font-size: 1.05rem;
+    }
+
+    section.card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      color: var(--ink);
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: var(--ink);
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+    .note {
+      border-left: 5px solid var(--accent);
+      background: var(--tint);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+    .note.good {
+      border-color: var(--good);
+      background: rgba(15,138,95,0.1);
+    }
+
+    .date-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: var(--tint);
+      color: var(--accent);
+      font-weight: 800;
+      margin-top: 14px;
+    }
+
+    .timeline {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+      display: grid;
+      gap: 12px;
+    }
+    .slot {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 14px;
+      align-items: start;
+      background: #fbfcff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .time {
+      font-weight: 800;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .activity { color: var(--ink); font-weight: 700; }
+    .sub { color: var(--muted); margin-top: 4px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .tile {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fbfcff;
+    }
+    .tile .icon { font-size: 1.5rem; }
+    ul { padding-left: 1.2rem; margin: 8px 0 0; }
+    li { margin-bottom: 6px; }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      background: #fff;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 720px) {
+      .hero { padding: 20px; }
+      section.card { padding: 18px; }
+      .slot { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <nav class="top" aria-label="NovaPay guides">
+      <a href="how-we-work.html">How we work today</a>
+      <a href="prompting-intro.html">Prompting with Copilot</a>
+      <a href="novapay-timetable.html" aria-current="page">Timetable</a>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">NovaPay · Event schedule</div>
+      <h1>Wednesday 21st October</h1>
+      <p class="lede">A full-day NovaPay activity plan for browsing the repo, using Copilot, publishing changes, checking the result, and improving the pages step by step.</p>
+      <div class="date-pill" aria-label="event date">📅 Wednesday 21st October</div>
+    </header>
+
+    <main id="main">
+      <section class="card" aria-labelledby="schedule-title">
+        <h2 id="schedule-title">Timetable</h2>
+        <p>Here is the day in order. The flow is browser-based: work in GitHub, publish, view the output, refresh, and iterate.</p>
+        <ol class="timeline">
+          <li class="slot"><div class="time">09:00</div><div><div class="activity">Arrival and Registration</div></div></li>
+          <li class="slot"><div class="time">09:30</div><div><div class="activity">Welcome and Introduction</div></div></li>
+          <li class="slot"><div class="time">09:45</div><div><div class="activity">Website Makeover - NovaPay Edition</div></div></li>
+          <li class="slot"><div class="time">10:30</div><div><div class="activity">Break</div></div></li>
+          <li class="slot"><div class="time">10:40</div><div><div class="activity">Effective Prompting &amp; Personas</div></div></li>
+          <li class="slot"><div class="time">11:00</div><div><div class="activity">Feature Creative Collision</div></div></li>
+          <li class="slot"><div class="time">11:10</div><div><div class="activity">Feature Build</div></div></li>
+          <li class="slot"><div class="time">12:10</div><div><div class="activity">Lunch</div></div></li>
+          <li class="slot"><div class="time">12:40</div><div><div class="activity">Feature Build, Test, &amp; Refine</div></div></li>
+          <li class="slot"><div class="time">13:50</div><div><div class="activity">Show &amp; Tell</div></div></li>
+          <li class="slot"><div class="time">14:20</div><div><div class="activity">Wrap Up</div></div></li>
+          <li class="slot"><div class="time">14:30</div><div><div class="activity">Departure</div></div></li>
+        </ol>
+      </section>
+
+      <section class="card" aria-labelledby="flow-title">
+        <h2 id="flow-title">How the day works</h2>
+        <div class="grid">
+          <div class="tile"><div class="icon" aria-hidden="true">📁</div><h3>Work in GitHub</h3><p>Use the Code tab to open files, read them, and make edits directly in the repo.</p></div>
+          <div class="tile"><div class="icon" aria-hidden="true">🤖</div><h3>Use Copilot well</h3><p>Ask clear questions in the repo or file view, then check the answer before keeping it.</p></div>
+          <div class="tile"><div class="icon" aria-hidden="true">🌐</div><h3>Publish and view</h3><p>After changes are saved, view the output in the browser and refresh to see the result.</p></div>
+          <div class="tile"><div class="icon" aria-hidden="true">🔁</div><h3>Iterate</h3><p>Make a small change, publish, refresh, test, and improve again.</p></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="notes-title">
+        <h2 id="notes-title">Quick notes</h2>
+        <ul>
+          <li>Codespaces are not part of this workflow.</li>
+          <li>This is a browser-first workaround using GitHub.</li>
+          <li>Keep changes small so the published result is easy to check.</li>
+          <li>Use the timetable to stay on track through the day.</li>
+        </ul>
+        <details>
+          <summary>What if the page doesn't update straight away?</summary>
+          <ul>
+            <li>Wait a moment for the publish to finish.</li>
+            <li>Refresh the browser tab.</li>
+            <li>Check that the right file was changed.</li>
+            <li>Then test again.</li>
+          </ul>
+        </details>
+      </section>
+    </main>
+
+    <footer>NovaPay · Wednesday 21st October · Browser-only GitHub workflow</footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay — Empty Feature Template</title>
+  <style>
+    :root {
+      --bg: #f4f5f9;
+      --card: #ffffff;
+      --ink: #1a1d29;
+      --text: #374151;
+      --muted: #5b6270;
+      --border: #d8dce6;
+      --accent: #5a50e0;
+      --tint: #eeedfb;
+      --shadow: 0 12px 30px rgba(26, 29, 41, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 45%, #edf0f7 100%);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 16px 48px;
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero, .panel {
+      background: var(--card);
+      border: 1px solid rgba(216, 220, 230, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(90, 80, 224, 0.09);
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 12px;
+      max-width: 14ch;
+    }
+
+    .lede {
+      max-width: 60ch;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat .label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 1rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fcfcfe 0%, #f7f8fc 100%);
+      min-height: 420px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .placeholder-inner {
+      max-width: 520px;
+    }
+
+    .placeholder h2 {
+      color: var(--ink);
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+    }
+
+    .placeholder p {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--tint);
+      color: var(--accent);
+      font-weight: 700;
+      border: 1px solid rgba(90, 80, 224, 0.12);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 720px) {
+      .hero { padding: 22px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .panel { padding: 16px; }
+      .placeholder { min-height: 320px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" aria-labelledby="title">
+      <div class="eyebrow">NovaPay feature starter</div>
+      <h1 id="title">Blank canvas for a student-built feature</h1>
+      <p class="lede">
+        This empty template is ready for a new NovaPay idea. Start here when a group is building
+        their own feature from scratch instead of fixing the existing exercise.
+      </p>
+      <div class="hero-grid">
+        <div class="stat">
+          <div class="label">Purpose</div>
+          <div class="value">A clean starting point</div>
+        </div>
+        <div class="stat">
+          <div class="label">Copilot use</div>
+          <div class="value">Ask, plan, build, review</div>
+        </div>
+        <div class="stat">
+          <div class="label">Persona support</div>
+          <div class="value">Designed to pair with the wizard</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="placeholder">
+        <div class="placeholder-inner">
+          <h2>Insert your NovaPay feature here</h2>
+          <p>
+            Add a page title, layout, components, interactions, and whatever the students invent.
+            This file stays intentionally empty so the team can create their own experience without
+            having to delete any starter content first.
+          </p>
+          <div class="chips" aria-label="starter ideas">
+            <span class="chip">Dashboard</span>
+            <span class="chip">Savings tool</span>
+            <span class="chip">Payment flow</span>
+            <span class="chip">Support screen</span>
+            <span class="chip">Anything else</span>
+          </div>
+          <p class="footer-note">
+            Tip: pair this page with a persona prompt so Copilot can review the work from a real
+            user’s point of view.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay — Talking Points</title>
+  <style>
+    :root {
+      --bg: #f4f5f9; --card: #ffffff; --ink: #1a1d29; --text: #374151; --muted: #5b6270;
+      --border: #d8dce6; --accent: #5a50e0; --accent-2: #1d6fa8; --tint: #eeedfb; --good: #0f8a5f;
+      --shadow: 0 18px 40px rgba(26,29,41,0.1); --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text); line-height: 1.6; padding: 28px 16px 56px;
+      background:
+        radial-gradient(circle at top left, rgba(90,80,224,0.13), transparent 30%),
+        radial-gradient(circle at top right, rgba(29,111,168,0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+    .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: #fff; padding: 8px 12px; border-radius: 8px; }
+    .skip:focus { left: 8px; z-index: 10; }
+    .wrap { max-width: 1040px; margin: 0 auto; }
+    nav.top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    nav.top a { padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--border); color: var(--accent); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    nav.top a[aria-current="page"] { background: var(--tint); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .hero { background: linear-gradient(135deg, #11152a 0%, #1f2350 55%, #5a50e0 100%); color: #fff; border-radius: 28px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 20px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; font-weight: 700; color: #d7d4ff; margin-bottom: 10px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.08; margin-bottom: 14px; }
+    .lede { max-width: 68ch; color: rgba(255,255,255,0.92); font-size: 1.05rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 18px; }
+    h2 { color: var(--ink); font-size: 1.35rem; margin-bottom: 10px; }
+    h3 { color: var(--ink); font-size: 1.05rem; margin-bottom: 6px; }
+    .note { border-left: 5px solid var(--accent); background: var(--tint); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+    .switch-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+    .switch-label { font-weight: 800; color: var(--ink); }
+    .switch-label.on { color: var(--accent); }
+    button.switch { position: relative; width: 74px; height: 40px; border-radius: 999px; border: 2px solid var(--accent); background: #fff; cursor: pointer; padding: 0; }
+    button.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); transition: transform .2s ease; }
+    button.switch[aria-checked="true"] { background: var(--tint); }
+    button.switch[aria-checked="true"]::after { transform: translateX(34px); }
+    @media (prefers-reduced-motion: reduce) { button.switch::after { transition: none; } }
+    .mode-banner { margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: var(--tint); font-weight: 700; color: var(--ink); }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .controls button { font: inherit; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; }
+    .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .controls .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .tp { border: 1px solid var(--border); border-radius: 18px; padding: 18px; background: #fbfcff; display: flex; flex-direction: column; gap: 8px; }
+    .tp .icon { font-size: 1.7rem; }
+    .tp .q { font-size: 1.05rem; font-weight: 800; color: var(--ink); }
+    .tp .follow { font-size: 0.92rem; color: var(--muted); }
+    .tp.highlight { outline: 4px solid var(--accent); background: var(--tint); }
+    .tag { align-self: flex-start; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--tint); color: var(--accent); }
+    .status { min-height: 1.4em; font-weight: 700; color: var(--good); }
+    ul { padding-left: 1.2rem; }
+    footer { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <nav class="top" aria-label="NovaPay guides">
+      <a href="how-we-work.html">How we work today</a>
+      <a href="prompting-intro.html">Prompting with Copilot</a>
+      <a href="persona-wizard.html">Persona wizard</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="talking-points.html" aria-current="page">Talking points</a>
+      <a href="novapay-timetable.html">Timetable</a>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">NovaPay · Conversation starters</div>
+      <h1>Not sure what to say? Start here.</h1>
+      <p class="lede">Today you get to talk to people who build real technology for a living. Everyone here is curious. Use these cards to start a conversation, in either direction.</p>
+    </header>
+
+    <main id="main">
+      <section class="card" aria-labelledby="mode-title">
+        <h2 id="mode-title">Who is asking?</h2>
+        <div class="switch-row">
+          <span class="switch-label on" id="labelStudents">Students ask</span>
+          <button type="button" class="switch" id="modeSwitch" role="switch" aria-checked="false" aria-labelledby="mode-title" aria-describedby="modeBanner"></button>
+          <span class="switch-label" id="labelAdults">Volunteers &amp; developers ask</span>
+        </div>
+        <p class="mode-banner" id="modeBanner" role="status" aria-live="polite"></p>
+        <div class="controls" role="group" aria-label="Choose a topic" id="topics"></div>
+        <div class="controls"><button type="button" class="primary" id="surprise">🎲 Surprise me</button></div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card" aria-labelledby="cards-title">
+        <h2 id="cards-title">Talking point cards</h2>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <section class="card" aria-labelledby="ground-title">
+        <h2 id="ground-title">Good ground rules for everyone</h2>
+        <ul>
+          <li>There are <strong>no silly questions</strong>. “I don’t know, let’s find out” is a great answer.</li>
+          <li>Keep conversations in the room, in the open, with the group. No private chats.</li>
+          <li>Don’t share personal details such as home address, school gossip, passwords or social media accounts.</li>
+          <li>Listen as much as you talk. It’s fine to disagree politely.</li>
+          <li>Opinions about the work are fine. Opinions about people are not.</li>
+          <li>If anything makes you uncomfortable, tell your teacher or the lead for the day straight away.</li>
+        </ul>
+        <p class="note">People here speak for themselves, not for their employer. Nobody needs to share confidential work or customer information.</p>
+      </section>
+    </main>
+
+    <footer>NovaPay · Wednesday 21st October · Talking points</footer>
+  </div>
+
+  <script>
+    const topicsList = ['All', 'The work', 'Copilot and AI', 'Design and people', 'Careers and paths', 'Money and banks', 'Today'];
+
+    const cards = {
+      students: [
+        { topic: 'The work', icon: '💻', q: 'What does a normal day look like for you?', follow: 'Follow up: What bit do you enjoy most?' },
+        { topic: 'The work', icon: '🐛', q: 'What’s the worst bug you ever had to fix?', follow: 'Follow up: How did you find it in the end?' },
+        { topic: 'The work', icon: '🧪', q: 'How do you test something before real people use it?', follow: 'Follow up: What happens if you miss something?' },
+        { topic: 'Copilot and AI', icon: '🤖', q: 'How do you use AI tools in your own work?', follow: 'Follow up: When do you not trust it?' },
+        { topic: 'Copilot and AI', icon: '🧠', q: 'What would you never let AI decide on its own?', follow: 'Follow up: Why?' },
+        { topic: 'Copilot and AI', icon: '✍️', q: 'What makes a good question to ask Copilot?', follow: 'Follow up: Can you show me one that works well?' },
+        { topic: 'Design and people', icon: '🎨', q: 'How do you know if something is easy to use?', follow: 'Follow up: Who do you ask?' },
+        { topic: 'Design and people', icon: '♿', q: 'How do you make sure everyone can use an app, including people who can’t see the screen?', follow: 'Follow up: Can I test mine with you?' },
+        { topic: 'Careers and paths', icon: '🛤️', q: 'How did you end up doing this job?', follow: 'Follow up: Is that what you wanted at my age?' },
+        { topic: 'Careers and paths', icon: '🎓', q: 'What would you tell yourself at my age?', follow: 'Follow up: What do you wish you had learned sooner?' },
+        { topic: 'Careers and paths', icon: '🌍', q: 'What jobs are there in tech that aren’t just coding?', follow: 'Follow up: Which one would suit me?' },
+        { topic: 'Money and banks', icon: '🏦', q: 'What does a bank’s technology team actually do?', follow: 'Follow up: What keeps money safe online?' },
+        { topic: 'Money and banks', icon: '🔒', q: 'How do banks spot something suspicious?', follow: 'Follow up: Can a computer get that wrong?' },
+        { topic: 'Money and banks', icon: '💷', q: 'What would make banking better for people my age?', follow: 'Follow up: Would you build it?' },
+        { topic: 'Today', icon: '👀', q: 'Can you look at my idea and tell me what you’d add?', follow: 'Follow up: Who would use it first?' },
+        { topic: 'Today', icon: '🆘', q: 'I’m stuck. Can you show me how you’d think about it?', follow: 'Follow up: What would you try first?' }
+      ],
+      adults: [
+        { topic: 'The work', icon: '🔍', q: 'Walk me through your idea. Who is it for?', follow: 'Follow up: What problem does it solve for them?' },
+        { topic: 'The work', icon: '🧩', q: 'What’s the part you’re most proud of so far?', follow: 'Follow up: What was the hardest bit?' },
+        { topic: 'The work', icon: '🧪', q: 'How will you know it works? What will you test?', follow: 'Follow up: What’s the strangest input someone could type?' },
+        { topic: 'Copilot and AI', icon: '🤖', q: 'What did you ask Copilot, and what did it give you?', follow: 'Follow up: Did you change anything? Why?' },
+        { topic: 'Copilot and AI', icon: '⚖️', q: 'When did Copilot get it wrong, and how did you spot it?', follow: 'Follow up: What would you do differently next time?' },
+        { topic: 'Copilot and AI', icon: '🧠', q: 'Can you explain this bit of code in your own words?', follow: 'Follow up: What would happen if we changed this line?' },
+        { topic: 'Design and people', icon: '🧑‍🤝‍🧑', q: 'Who is your persona and what would they say about this page?', follow: 'Follow up: What would make them smile?' },
+        { topic: 'Design and people', icon: '👓', q: 'How would someone use this with only a keyboard, or with large text?', follow: 'Follow up: Want to try it together?' },
+        { topic: 'Careers and paths', icon: '🌟', q: 'What do you enjoy most about computers and technology?', follow: 'Follow up: What would you like to try next?' },
+        { topic: 'Careers and paths', icon: '🔮', q: 'If you could invent any app, what would it be?', follow: 'Follow up: Who would you build it for?' },
+        { topic: 'Money and banks', icon: '💡', q: 'What do you wish your bank app did that it doesn’t?', follow: 'Follow up: What would make you trust it?' },
+        { topic: 'Money and banks', icon: '🛡️', q: 'What would make you feel safe using an app with your money?', follow: 'Follow up: What would worry you?' },
+        { topic: 'Money and banks', icon: '🧒', q: 'What do people your age find confusing about money?', follow: 'Follow up: How could a page explain it better?' },
+        { topic: 'Today', icon: '🎤', q: 'What are you going to say in your 2-minute demo?', follow: 'Follow up: What’s the one thing you want people to remember?' },
+        { topic: 'Today', icon: '🙋', q: 'What’s one thing you’d like help with right now?', follow: 'Follow up: What would a good result look like?' },
+        { topic: 'Today', icon: '🔁', q: 'What would you improve if you had another hour?', follow: 'Follow up: What would you do first?' }
+      ]
+    };
+
+    const banners = {
+      students: 'Students ask. Pick a card and ask a volunteer or developer. Their answers are their own experience, not the only answer.',
+      adults: 'Volunteers and developers ask. Ask with curiosity, not to test. Let students explain in their own words and give them time to think.'
+    };
+
+    const sw = document.getElementById('modeSwitch');
+    const banner = document.getElementById('modeBanner');
+    const grid = document.getElementById('grid');
+    const topicsEl = document.getElementById('topics');
+    const statusEl = document.getElementById('status');
+    const lblS = document.getElementById('labelStudents');
+    const lblA = document.getElementById('labelAdults');
+    let mode = 'students';
+    let topic = 'All';
+
+    function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+    function renderTopics() {
+      topicsEl.innerHTML = topicsList.map(t => `<button type="button" data-topic="${esc(t)}" aria-pressed="${t === topic}">${esc(t)}</button>`).join('');
+    }
+
+    function render() {
+      const list = cards[mode].map((c, i) => ({ c, i })).filter(({ c }) => topic === 'All' || c.topic === topic);
+      grid.innerHTML = list.map(({ c, i }) => `
+        <article class="tp" id="tp-${i}">
+          <div class="icon" aria-hidden="true">${c.icon}</div>
+          <span class="tag">${esc(c.topic)}</span>
+          <p class="q">${esc(c.q)}</p>
+          <p class="follow">${esc(c.follow)}</p>
+        </article>`).join('');
+      banner.textContent = banners[mode];
+      lblS.classList.toggle('on', mode === 'students');
+      lblA.classList.toggle('on', mode === 'adults');
+    }
+
+    sw.addEventListener('click', () => {
+      mode = mode === 'students' ? 'adults' : 'students';
+      sw.setAttribute('aria-checked', String(mode === 'adults'));
+      statusEl.textContent = mode === 'students' ? 'Showing questions students can ask.' : 'Showing questions volunteers and developers can ask.';
+      render();
+    });
+
+    topicsEl.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-topic]');
+      if (!b) return;
+      topic = b.dataset.topic;
+      renderTopics();
+      statusEl.textContent = '';
+      render();
+    });
+
+    document.getElementById('surprise').addEventListener('click', () => {
+      topic = 'All';
+      renderTopics();
+      render();
+      const i = Math.floor(Math.random() * cards[mode].length);
+      const el = document.getElementById('tp-' + i);
+      el.classList.add('highlight');
+      el.scrollIntoView({ block: 'center' });
+      statusEl.textContent = 'Try this one: ' + cards[mode][i].q;
+    });
+
+    renderTopics();
+    render();
+  </script>
+</body>
+</html>

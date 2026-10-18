@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <title>NovaPay Pro — Manage My Mortgage</title>
+
+  <!--
+    ╔════════════════════════════════════════════════════════════════════╗
+    ║  WEBSITE MAKEOVER — NOVAPAY PRO EDITION                          ║
+    ╠════════════════════════════════════════════════════════════════════╣
+    ║  Challenge 2: Manage My Mortgage                                 ║
+    ║                                                                    ║
+    ║  This page is intentionally different from the main dashboard.     ║
+    ║  It focuses on helping a customer manage a mortgage instead of     ║
+    ║  repeating the same banking patterns.                              ║
+    ║                                                                    ║
+    ║  Learner goals:                                                    ║
+    ║   • review mortgage summary information                            ║
+    ║   • understand payment breakdowns                                  ║
+    ║   • make an overpayment                                            ║
+    ║   • explore repayment options                                       ║
+    ║   • spot UI/UX improvements, accessibility issues, and bugs        ║
+    ║                                                                    ║
+    ║  Everything you need is in THIS file. Nothing is hidden and        ║
+    ║  nothing needs installing. Check the Console (F12) too.            ║
+    ║                                                                    ║
+    ║  Goal: a working, accessible, responsive GOLD STANDARD page.       ║
+    ║  Tiers: ★ Medium  ★★ Hard  ★★★ Very hard  ✦ Stretch               ║
+    ╚════════════════════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f3f5fb;
+      --card: #ffffff;
+      --hero-from: #102a4d;
+      --hero-to: #1f5c86;
+      --accent: #2f80ed;
+      --accent-light: #eaf3ff;
+      --text: #0d0f1c;
+      --muted: #6f7890;
+      --border: #e5e9f2;
+      --credit: #0ca678;
+      --debit: #e03131;
+      --shadow: 0 8px 30px rgba(13, 15, 28, 0.08);
+      --r: 18px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(900px 500px at 10% -10%, rgba(47, 128, 237, 0.14), transparent 60%), var(--bg);
+      color: var(--text);
+      padding-bottom: 48px;
+    }
+
+    button, input, select { font: inherit; outline: none; }
+
+    .app-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(16, 42, 77, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .app-logo { font-size: 22px; font-weight: 800; color: #fff; }
+    .app-logo span { color: #7cc4ff; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
+      width: 36px; height: 36px; border: 0; border-radius: 10px;
+      background: rgba(255,255,255,0.12); cursor: pointer; color: #fff;
+    }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #7cc4ff, #2f80ed); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+
+    .main { width: min(1100px, calc(100% - 32px)); margin: 24px auto; }
+
+    .hero {
+      border-radius: var(--r);
+      padding: 28px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--hero-from), var(--hero-to));
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .hero-top { display: flex; justify-content: space-between; gap: 20px; align-items: start; flex-wrap: wrap; }
+    .hero-copy { max-width: 620px; }
+    .hero-eyebrow { font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .hero-title { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-top: 8px; font-weight: 800; }
+    .hero-text { margin-top: 10px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+    .hero-pill {
+      padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.12);
+      color: #fff; font-size: 13px; white-space: nowrap;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 24px;
+    }
+    .hero-stat {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px; padding: 14px;
+    }
+    .hero-stat-label { font-size: 12px; color: rgba(255,255,255,0.72); text-transform: uppercase; }
+    .hero-stat-value { font-size: 20px; font-weight: 800; margin-top: 6px; }
+
+    .grid { display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 16px; }
+    .stack { display: grid; gap: 16px; }
+    .card {
+      background: var(--card); border-radius: var(--r); box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .card-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
+    .card-subtitle { color: var(--muted); font-size: 13px; margin-top: -8px; margin-bottom: 14px; }
+
+    .summary-row {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+    }
+    .summary-tile {
+      border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+    .summary-label { font-size: 12px; color: var(--muted); text-transform: uppercase; }
+    .summary-value { font-size: 24px; font-weight: 800; margin-top: 6px; }
+    .summary-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    .goal-bar { height: 12px; border-radius: 999px; background: var(--accent-light); overflow: hidden; }
+    .goal-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #6bb4ff); width: 0%; }
+    .goal-text { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+    .schedule {
+      display: grid; gap: 10px;
+    }
+    .schedule-item {
+      display: flex; justify-content: space-between; gap: 14px; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .schedule-item:last-child { border-bottom: 0; padding-bottom: 0; }
+    .schedule-meta { min-width: 0; }
+    .schedule-name { font-weight: 700; }
+    .schedule-date { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .schedule-amount { font-weight: 800; white-space: nowrap; }
+    .schedule-amount.credit { color: var(--credit); }
+    .schedule-amount.debit { color: var(--debit); }
+
+    .field { margin-bottom: 14px; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #334; }
+    .input-wrap {
+      display: flex; align-items: center; border: 1px solid var(--border); border-radius: 12px;
+      padding: 0 12px; background: #fff;
+    }
+    .input-prefix { color: var(--muted); margin-right: 6px; }
+    .input-wrap input, .input-wrap select {
+      flex: 1; border: 0; padding: 12px 0; font-size: 15px; background: transparent; min-width: 0;
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn {
+      padding: 10px 16px; border: 0; border-radius: 10px;
+      background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .btn-ghost { background: var(--accent-light); color: var(--accent); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .alert { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px; }
+    .alert-ok { background: #eafaf2; color: var(--credit); }
+    .alert-err { background: #fdecec; color: var(--debit); }
+
+    .result-box { display: none; margin-top: 16px; padding: 16px; border-radius: 14px; background: var(--accent-light); }
+    .result-eyebrow { font-size: 12px; color: var(--muted); }
+    .result-figure { font-size: 28px; font-weight: 800; color: var(--accent); margin-top: 4px; }
+
+    .options {
+      display: grid; gap: 10px;
+    }
+    .option {
+      border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+      display: flex; justify-content: space-between; gap: 12px; align-items: start;
+    }
+    .option strong { display: block; }
+    .option span { color: var(--muted); font-size: 13px; display: block; margin-top: 4px; }
+    .tag {
+      background: var(--accent-light); color: var(--accent); border-radius: 999px;
+      padding: 6px 10px; font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
+
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero-grid, .summary-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .main { width: min(100% - 20px, 1100px); }
+      .hero { padding: 20px; }
+      .hero-grid, .summary-row, .two-col { grid-template-columns: 1fr; }
+      .app-header { padding: 12px 16px; }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-logo">nova<span>pay</span> Pro</div>
+    <div class="header-actions">
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <button class="icon-btn" aria-label="Settings">⚙️</button>
+      <div class="avatar" aria-hidden="true">MC</div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <div class="hero-eyebrow">Mortgage Hub</div>
+          <h1 class="hero-title">Manage my mortgage</h1>
+          <p class="hero-text">
+            A clearer view of your home loan, your next payment, and what happens if you make an overpayment.
+          </p>
+        </div>
+        <div class="hero-pill">Account ending ••4821</div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-stat">
+          <div class="hero-stat-label">Balance remaining</div>
+          <div class="hero-stat-value" id="hero-balance">£185,420.00</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Monthly payment</div>
+          <div class="hero-stat-value" id="hero-payment">£1,245.00</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Interest rate</div>
+          <div class="hero-stat-value">4.89%</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Next due</div>
+          <div class="hero-stat-value">28 Jul</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div class="stack">
+        <section class="card">
+          <div class="card-title">Mortgage overview</div>
+          <div class="summary-row">
+            <div class="summary-tile">
+              <div class="summary-label">Current balance</div>
+              <div class="summary-value" id="summary-balance">£185,420.00</div>
+              <div class="summary-note">Fixed rate until 2028</div>
+            </div>
+            <div class="summary-tile">
+              <div class="summary-label">Next payment</div>
+              <div class="summary-value" id="summary-next">£1,245.00</div>
+              <div class="summary-note">Due in 10 days</div>
+            </div>
+            <div class="summary-tile">
+              <div class="summary-label">Estimated term left</div>
+              <div class="summary-value" id="summary-term">19 yrs</div>
+              <div class="summary-note">Based on current schedule</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-title">Repayment progress</div>
+          <div class="goal-bar"><div class="goal-fill" id="goal-fill"></div></div>
+          <div class="goal-text" id="goal-text"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-title">Upcoming payments</div>
+          <div class="schedule" id="schedule-list"></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card-title">Make an overpayment</div>
+          <div class="card-subtitle">Test whether the amount is allowed before you commit it.</div>
+
+          <div class="field">
+            <label class="field-label" for="overpay-amount">Amount</label>
+            <div class="input-wrap">
+              <span class="input-prefix">£</span>
+              <input type="number" id="overpay-amount" placeholder="250">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="overpay-type">Apply to</label>
+            <div class="input-wrap">
+              <select id="overpay-type">
+                <option value="reduce-term">Reduce term</option>
+                <option value="reduce-payment">Reduce monthly payment</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" onclick="makeOverpayment()">Calculate</button>
+            <button class="btn btn-ghost" onclick="resetOverpayment()">Reset</button>
+          </div>
+
+          <div class="alert alert-ok" id="overpay-success"></div>
+          <div class="alert alert-err" id="overpay-error"></div>
+
+          <div class="result-box" id="overpay-result-box">
+            <div class="result-eyebrow">New balance estimate</div>
+            <div class="result-figure" id="overpay-result-figure"></div>
+            <div class="goal-text" id="overpay-result-note"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-title">Repayment options</div>
+          <div class="options">
+            <div class="option">
+              <div>
+                <strong>Round up monthly payment</strong>
+                <span>Pay a little extra each month to chip away at the principal.</span>
+              </div>
+              <div class="tag">Low risk</div>
+            </div>
+            <div class="option">
+              <div>
+                <strong>One-off overpayment</strong>
+                <span>Make a single payment that can reduce your balance faster.</span>
+              </div>
+              <div class="tag">Flexible</div>
+            </div>
+            <div class="option">
+              <div>
+                <strong>Change payment date</strong>
+                <span>Move the collection day to match payday or household bills.</span>
+              </div>
+              <div class="tag">Admin</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-title">Interest checker</div>
+          <div class="two-col">
+            <div class="field">
+              <label class="field-label" for="calc-balance">Balance</label>
+              <div class="input-wrap">
+                <span class="input-prefix">£</span>
+                <input type="number" id="calc-balance" placeholder="185420">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="calc-rate">Rate</label>
+              <div class="input-wrap">
+                <span class="input-prefix">%</span>
+                <input type="number" id="calc-rate" placeholder="4.89" step="0.01">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="calc-months">Months remaining</label>
+            <div class="input-wrap">
+              <input type="number" id="calc-months" placeholder="228">
+            </div>
+          </div>
+          <button class="btn btn-ghost" onclick="calculateProjection()">Project payment</button>
+          <div class="result-box" id="projection-box">
+            <div class="result-eyebrow">Estimated monthly interest only</div>
+            <div class="result-figure" id="projection-value"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const mortgage = {
+      balance: 185420,
+      monthlyPayment: 1245,
+      rate: 4.89,
+      monthsLeft: 228,
+      originalBalance: 240000,
+      minimumOverpayment: 25,
+      annualOverpaymentLimit: 10000
+    };
+
+    const upcomingPayments = [
+      { name: 'Mortgage payment', date: '28 Jul 2026', amount: -1245.00, type: 'debit' },
+      { name: 'Interest adjustment', date: '28 Aug 2026', amount: -189.24, type: 'debit' },
+      { name: 'Balance review', date: '01 Sep 2026', amount: 0.00, type: 'credit' }
+    ];
+
+    function formatMoney(n) {
+      return '£' + Number(n).toFixed(2);
+    }
+
+    function updateSummary() {
+      document.getElementById('hero-balance').textContent = formatMoney(mortgage.balance);
+      document.getElementById('hero-payment').textContent = formatMoney(mortgage.monthlyPayment);
+      document.getElementById('summary-balance').textContent = formatMoney(mortgage.balance);
+      document.getElementById('summary-next').textContent = formatMoney(mortgage.monthlyPayment);
+      document.getElementById('summary-term').textContent = Math.round(mortgage.monthsLeft / 12) + ' yrs';
+    }
+
+    function renderProgress() {
+      const repaid = mortgage.originalBalance - mortgage.balance;
+      const progress = (repaid / mortgage.originalBalance) * 100;
+      document.getElementById('goal-fill').style.width = progress.toFixed(2) + '%';
+      document.getElementById('goal-text').textContent =
+        formatMoney(repaid) + ' repaid from ' + formatMoney(mortgage.originalBalance) + ' original borrowing';
+    }
+
+    function renderSchedule() {
+      const list = document.getElementById('schedule-list');
+      list.innerHTML = upcomingPayments.map(item => `
+        <div class="schedule-item">
+          <div class="schedule-meta">
+            <div class="schedule-name">${item.name}</div>
+            <div class="schedule-date">${item.date}</div>
+          </div>
+          <div class="schedule-amount ${item.type}">${item.amount === 0 ? 'Planned' : (item.amount > 0 ? '+' : '−') + formatMoney(Math.abs(item.amount))}</div>
+        </div>
+      `).join('');
+    }
+
+    function makeOverpayment() {
+      const successEl = document.getElementById('overpay-success');
+      const errorEl = document.getElementById('overpay-error');
+      const resultBox = document.getElementById('overpay-result-box');
+
+      successEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      resultBox.style.display = 'none';
+
+      const amount = parseFloat(document.getElementById('overpay-amount').value);
+      const choice = document.getElementById('overpay-type').value;
+
+      if (isNaN(amount) || amount <= 0) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Enter a valid overpayment amount.';
+        return;
+      }
+
+      if (amount < mortgage.minimumOverpayment) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Minimum overpayment is ' + formatMoney(mortgage.minimumOverpayment) + '.';
+        return;
+      }
+
+      if (amount > mortgage.annualOverpaymentLimit) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'This exceeds the annual overpayment allowance of ' + formatMoney(mortgage.annualOverpaymentLimit) + '.';
+        return;
+      }
+
+      if (amount >= mortgage.balance) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Overpayment cannot be larger than the remaining balance.';
+        return;
+      }
+
+      mortgage.balance -= amount;
+      mortgage.monthsLeft = Math.max(0, mortgage.monthsLeft - Math.ceil(amount / 400));
+      updateSummary();
+      renderProgress();
+
+      const note = choice === 'reduce-term'
+        ? 'This could shorten the mortgage term.'
+        : 'This could lower your future monthly payment.';
+
+      resultBox.style.display = 'block';
+      document.getElementById('overpay-result-figure').textContent = formatMoney(mortgage.balance);
+      document.getElementById('overpay-result-note').textContent = note;
+
+      successEl.style.display = 'block';
+      successEl.textContent = 'Overpayment of ' + formatMoney(amount) + ' prepared successfully.';
+    }
+
+    function resetOverpayment() {
+      document.getElementById('overpay-amount').value = '';
+      document.getElementById('overpay-type').value = 'reduce-term';
+      document.getElementById('overpay-success').style.display = 'none';
+      document.getElementById('overpay-error').style.display = 'none';
+      document.getElementById('overpay-result-box').style.display = 'none';
+    }
+
+    function calculateProjection() {
+      const balance = parseFloat(document.getElementById('calc-balance').value);
+      const rate = parseFloat(document.getElementById('calc-rate').value);
+      const months = parseFloat(document.getElementById('calc-months').value);
+      const box = document.getElementById('projection-box');
+
+      if ([balance, rate, months].some(n => Number.isNaN(n) || n <= 0)) {
+        box.style.display = 'block';
+        document.getElementById('projection-value').textContent = 'Check the inputs';
+        return;
+      }
+
+      const monthlyInterest = (balance * (rate / 100)) / 12;
+      box.style.display = 'block';
+      document.getElementById('projection-value').textContent = formatMoney(monthlyInterest);
+    }
+
+    updateSummary();
+    renderProgress();
+    renderSchedule();
+  </script>
+
+</body>
+</html>

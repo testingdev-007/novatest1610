@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay — Effective Prompting with Copilot</title>
+  <style>
+    :root {
+      --bg: #f4f5f9; --card: #ffffff; --ink: #1a1d29; --text: #374151; --muted: #5b6270;
+      --border: #d8dce6; --accent: #5a50e0; --tint: #eeedfb; --good: #0f8a5f; --warn: #a15c00;
+      --shadow: 0 18px 40px rgba(26,29,41,0.1); --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text); line-height: 1.6; padding: 28px 16px 56px;
+      background:
+        radial-gradient(circle at top left, rgba(90,80,224,0.13), transparent 30%),
+        radial-gradient(circle at top right, rgba(29,111,168,0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+    .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: #fff; padding: 8px 12px; border-radius: 8px; }
+    .skip:focus { left: 8px; z-index: 10; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    nav.top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    nav.top a { padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--border); color: var(--accent); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    nav.top a[aria-current="page"] { background: var(--tint); }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .hero { background: linear-gradient(135deg, #11152a 0%, #1f2350 55%, #5a50e0 100%); color: #fff; border-radius: 28px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 20px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; font-weight: 700; color: #d7d4ff; margin-bottom: 10px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.08; margin-bottom: 14px; }
+    .lede { max-width: 68ch; color: rgba(255,255,255,0.92); font-size: 1.05rem; }
+    section.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 18px; }
+    h2 { color: var(--ink); font-size: 1.35rem; margin-bottom: 10px; }
+    h3 { color: var(--ink); font-size: 1.05rem; margin-bottom: 6px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+    .tile { border: 1px solid var(--border); border-radius: 18px; padding: 16px; background: #fbfcff; }
+    .formula { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .formula span { background: var(--tint); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-weight: 700; }
+    .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+    .prompt { border-radius: 16px; padding: 14px 16px; border: 2px solid var(--border); }
+    .prompt.weak { border-color: #e2b46a; background: #fff8ec; }
+    .prompt.strong { border-color: var(--good); background: rgba(15,138,95,0.08); }
+    .prompt .label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; margin-bottom: 6px; }
+    .weak .label { color: var(--warn); }
+    .strong .label { color: var(--good); }
+    blockquote { margin: 0; font-style: italic; color: var(--ink); }
+    .note { border-left: 5px solid var(--accent); background: var(--tint); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+    ul { padding-left: 1.2rem; margin: 8px 0 0; }
+    li { margin-bottom: 6px; }
+    code { background: #eef1fb; padding: 2px 6px; border-radius: 6px; font-size: 0.92em; }
+    details { border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; margin-top: 10px; background: #fff; }
+    summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+    footer { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 24px; }
+    @media (max-width: 720px) { .hero { padding: 20px; } section.card { padding: 18px; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <nav class="top" aria-label="NovaPay guides">
+      <a href="how-we-work.html">How we work today</a>
+      <a href="prompting-intro.html" aria-current="page">Prompting with Copilot</a>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">NovaPay · Copilot skills</div>
+      <h1>Prompting with Copilot: ask better, get better</h1>
+      <p class="lede">Copilot is a teammate, not an answer machine. The clearer your question, the more useful its help. Here are the habits that make the difference.</p>
+    </header>
+
+    <main id="main">
+      <section class="card" aria-labelledby="recipe-title">
+        <h2 id="recipe-title">A simple recipe for a good prompt</h2>
+        <p>You don't need magic words. Just give Copilot enough to work with:</p>
+        <div class="formula" aria-label="Prompt recipe">
+          <span>1. Context</span><span>2. What I see</span><span>3. What I expected</span><span>4. What I want from you</span>
+        </div>
+        <ul>
+          <li><strong>Context:</strong> which file or section you're looking at.</li>
+          <li><strong>What I see:</strong> describe the actual behaviour or look.</li>
+          <li><strong>What I expected:</strong> describe what should happen instead.</li>
+          <li><strong>What I want:</strong> an explanation, some options, a review, or a small change.</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="compare-title">
+        <h2 id="compare-title">Weak vs strong prompts</h2>
+        <div class="compare">
+          <div class="prompt weak">
+            <span class="label">Weak</span>
+            <blockquote>"Fix this."</blockquote>
+            <p style="margin-top:8px">Copilot has to guess what's wrong, and may change the wrong thing.</p>
+          </div>
+          <div class="prompt strong">
+            <span class="label">Strong</span>
+            <blockquote>"In this file, the button on the form does nothing when I click it. I expected a message to appear. Can you explain what could cause that before suggesting a fix?"</blockquote>
+          </div>
+          <div class="prompt weak">
+            <span class="label">Weak</span>
+            <blockquote>"Make it look better."</blockquote>
+            <p style="margin-top:8px">"Better" means different things to different people.</p>
+          </div>
+          <div class="prompt strong">
+            <span class="label">Strong</span>
+            <blockquote>"Give me three options to make the text on this card easier to read for someone with poor eyesight. Explain the trade-offs of each."</blockquote>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="bugs-title">
+        <h2 id="bugs-title">Tips for fixing bugs</h2>
+        <div class="grid">
+          <div class="tile"><h3>Describe, don't diagnose</h3><p>Say what you saw and what you expected. Let Copilot help work out the cause.</p></div>
+          <div class="tile"><h3>Explain first, fix second</h3><p>Ask "why is this happening?" before "how do I fix it?" You'll learn more and spot wrong answers faster.</p></div>
+          <div class="tile"><h3>Ask about one thing</h3><p>Point to a specific section or line numbers instead of the whole file.</p></div>
+          <div class="tile"><h3>Test the whole picture</h3><p>A fix for one symptom can hide a deeper cause. Check that related things still agree with each other.</p></div>
+          <div class="tile"><h3>Try different inputs</h3><p>Try empty, zero, negative, very big and unusual values. Ask Copilot what edge cases to think about.</p></div>
+          <div class="tile"><h3>Use clues</h3><p>Error messages and warnings are hints. Paste them into your prompt exactly as shown.</p></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="design-title">
+        <h2 id="design-title">Tips for design changes</h2>
+        <div class="grid">
+          <div class="tile"><h3>Name the person</h3><p>Say who the design is for, such as a first-time user, someone on a phone, or someone using only a keyboard.</p></div>
+          <div class="tile"><h3>Ask for options</h3><p>Design rarely has one right answer. Ask for two or three, then choose and say why.</p></div>
+          <div class="tile"><h3>Think about everyone</h3><p>Ask about readability, colour contrast, text size, focus outlines and screen readers.</p></div>
+          <div class="tile"><h3>Check small screens</h3><p>Ask how the layout should behave on a phone, then actually test it.</p></div>
+          <div class="tile"><h3>Be specific about style</h3><p>Mention the feel you want (calm, bold, friendly) and any colours or branding to keep.</p></div>
+          <div class="tile"><h3>Ask for the reasoning</h3><p>"Why is this better?" helps you decide and helps you explain your choice later.</p></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="habits-title">
+        <h2 id="habits-title">Golden rules</h2>
+        <ul>
+          <li><strong>Never keep a change you can't explain.</strong> Ask Copilot to walk you through it.</li>
+          <li><strong>Copilot can be wrong.</strong> Always test what it suggests.</li>
+          <li><strong>Follow up.</strong> If an answer isn't right, say what's still wrong and try again.</li>
+          <li><strong>Small steps win.</strong> One request, one change, one test.</li>
+          <li><strong>Ask it to review your work</strong> and look for things you might have missed.</li>
+        </ul>
+        <details>
+          <summary>Handy follow-up prompts</summary>
+          <ul>
+            <li>"Can you explain that line by line?"</li>
+            <li>"What else could cause this?"</li>
+            <li>"What could go wrong with this change?"</li>
+            <li>"What should I test to be sure it works?"</li>
+            <li>"Is there a simpler way to do this?"</li>
+          </ul>
+        </details>
+        <p class="note"><strong>Try it:</strong> take your next prompt and add what you saw, what you expected and what you want back. Notice how the answer changes.</p>
+      </section>
+    </main>
+
+    <footer>NovaPay · Ask clearly, test carefully, learn something every lap. <a href="how-we-work.html">How we work today</a></footer>
+  </div>
+</body>
+</html>

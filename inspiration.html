@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay — Inspiration</title>
+  <style>
+    :root {
+      --bg: #f4f5f9; --card: #ffffff; --ink: #1a1d29; --text: #374151; --muted: #5b6270;
+      --border: #d8dce6; --accent: #5a50e0; --tint: #eeedfb; --good: #0f8a5f; --warn: #a15c00;
+      --shadow: 0 18px 40px rgba(26,29,41,0.1); --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text); line-height: 1.6; padding: 28px 16px 56px;
+      background:
+        radial-gradient(circle at top left, rgba(90,80,224,0.13), transparent 30%),
+        radial-gradient(circle at top right, rgba(29,111,168,0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+    .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: #fff; padding: 8px 12px; border-radius: 8px; }
+    .skip:focus { left: 8px; z-index: 10; }
+    .wrap { max-width: 1040px; margin: 0 auto; }
+    nav.top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    nav.top a { padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--border); color: var(--accent); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    nav.top a[aria-current="page"] { background: var(--tint); }
+    a:focus-visible, button:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .hero { background: linear-gradient(135deg, #11152a 0%, #1f2350 55%, #5a50e0 100%); color: #fff; border-radius: 28px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 20px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; font-weight: 700; color: #d7d4ff; margin-bottom: 10px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.08; margin-bottom: 14px; }
+    .lede { max-width: 68ch; color: rgba(255,255,255,0.92); font-size: 1.05rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 18px; }
+    h2 { color: var(--ink); font-size: 1.35rem; margin-bottom: 10px; }
+    h3 { color: var(--ink); font-size: 1.1rem; margin-bottom: 6px; }
+    .note { border-left: 5px solid var(--accent); background: var(--tint); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+    .controls button, .controls select { font: inherit; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; }
+    .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .controls .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .idea { border: 1px solid var(--border); border-radius: 18px; padding: 18px; background: #fbfcff; display: flex; flex-direction: column; gap: 10px; }
+    .idea .icon { font-size: 1.8rem; }
+    .idea.highlight { outline: 4px solid var(--accent); background: var(--tint); }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--tint); color: var(--accent); }
+    .tag.start { background: rgba(15,138,95,0.12); color: var(--good); }
+    .tag.mid { background: rgba(161,92,0,0.12); color: var(--warn); }
+    .tag.stretch { background: #fde7ee; color: #a3194b; }
+    .idea dl { margin: 0; font-size: 0.93rem; }
+    .idea dt { font-weight: 800; color: var(--ink); margin-top: 6px; }
+    .idea dd { margin: 0; }
+    .prompt { background: #fff; border: 1px dashed var(--border); border-radius: 12px; padding: 10px 12px; font-size: 0.9rem; }
+    .copy { align-self: flex-start; font: inherit; font-weight: 700; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--accent); background: #fff; color: var(--accent); cursor: pointer; }
+    .status { min-height: 1.4em; font-weight: 700; color: var(--good); }
+    ul { padding-left: 1.2rem; }
+    footer { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 24px; }
+    @media (prefers-reduced-motion: no-preference) { .idea { transition: transform .15s ease; } .idea:hover { transform: translateY(-2px); } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <nav class="top" aria-label="NovaPay guides">
+      <a href="how-we-work.html">How we work today</a>
+      <a href="prompting-intro.html">Prompting with Copilot</a>
+      <a href="persona-wizard.html">Persona wizard</a>
+      <a href="inspiration.html" aria-current="page">Inspiration</a>
+      <a href="talking-points.html">Talking points</a>
+      <a href="novapay-timetable.html">Timetable</a>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">NovaPay · Feature inspiration</div>
+      <h1>Not sure what to build? Start here.</h1>
+      <p class="lede">Every real bank feature starts with one question: <strong>who is this for, and what is hard for them right now?</strong> Pick a card, change it, make it yours. There are no wrong answers.</p>
+    </header>
+
+    <main id="main">
+      <section class="card" aria-labelledby="how-title">
+        <h2 id="how-title">How to use these cards</h2>
+        <ul>
+          <li>Browse, or press <strong>Surprise me</strong>.</li>
+          <li>Pick an idea, then change one thing so it becomes yours (a different person, a twist, a new look).</li>
+          <li>Copy the starter prompt, then open the <a href="persona-wizard.html">persona wizard</a> to say who it is for.</li>
+          <li>Build in <a href="novapay-template.html">the blank NovaPay template</a>. Not sure about the code? Use the <a href="starter-template.html">starter template</a>.</li>
+        </ul>
+        <p class="note"><strong>Remember:</strong> NovaPay is pretend. Use made-up names and numbers only. Never type real bank details, real names or real passwords into your page.</p>
+      </section>
+
+      <section class="card" aria-labelledby="cards-title">
+        <h2 id="cards-title">Idea cards</h2>
+        <div class="controls" role="group" aria-label="Filter ideas by challenge level">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="start" aria-pressed="false">Good first build</button>
+          <button type="button" data-filter="mid" aria-pressed="false">A bit more logic</button>
+          <button type="button" data-filter="stretch" aria-pressed="false">Stretch</button>
+          <button type="button" class="primary" id="surprise">🎲 Surprise me</button>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <section class="card" aria-labelledby="twist-title">
+        <h2 id="twist-title">Make it yours: twist cards</h2>
+        <p>Stuck on a card? Add one of these twists.</p>
+        <ul>
+          <li>What if the person using it is <strong>8 years old</strong>? Or <strong>80</strong>?</li>
+          <li>What if they have <strong>very little time</strong>, or a <strong>very small screen</strong>?</li>
+          <li>What if they find <strong>numbers stressful</strong>?</li>
+          <li>What if they can’t see colours well, or use only a <strong>keyboard</strong>?</li>
+          <li>What would make it <strong>fun</strong> instead of boring?</li>
+          <li>What would make someone feel <strong>safe</strong> and <strong>in control</strong> of their money?</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>NovaPay · Wednesday 21st October · Inspiration</footer>
+  </div>
+
+  <script>
+    const ideas = [
+      { icon: '🏺', title: 'Savings pots', level: 'start', who: 'Someone saving for several things at once', what: 'Create named pots (Trainers, Holiday, Rainy day). Add money to a pot and watch each one fill up.', twist: 'Let a pot change colour or show a message when it is nearly full.', prompt: 'Help me build a NovaPay savings pots page in HTML, CSS and JavaScript. Users can create pots, add money, and see a progress bar for each pot. Use made-up numbers only.' },
+      { icon: '🎯', title: 'Savings goal tracker', level: 'start', who: 'Someone saving for one big thing', what: 'Set a target and a date. Show how much is saved, how much is left, and a progress bar.', twist: 'Show “you need £X a week to get there”.', prompt: 'Help me build a savings goal tracker for NovaPay with a target amount, a progress bar and a weekly amount needed. Explain the code simply.' },
+      { icon: '🪙', title: 'Round-up saver', level: 'mid', who: 'Someone who forgets to save', what: 'Round every purchase up to the next pound and put the spare change in savings.', twist: 'Show what the spare change adds up to after a month.', prompt: 'Help me build a round-up savings calculator for NovaPay in plain JavaScript. It rounds purchases up to the next pound and totals the spare change.' },
+      { icon: '💱', title: 'Currency converter', level: 'start', who: 'Someone going on holiday', what: 'Convert pounds into other currencies using fixed made-up rates.', twist: 'Add a “how far will my money go?” example, like the price of a meal.', prompt: 'Help me build a simple currency converter for NovaPay using fixed rates that I choose. Make it easy to read on a phone.' },
+      { icon: '🧮', title: 'Budget planner', level: 'mid', who: 'Someone with pocket money or a first job', what: 'Enter money in and money out. See what is left, and which category costs the most.', twist: 'Warn gently when spending is higher than money in.', prompt: 'Help me build a budget planner for NovaPay with income, expenses by category and what is left over. Keep the messages kind and clear.' },
+      { icon: '📊', title: 'Spending category cards', level: 'start', who: 'Someone who wonders where their money goes', what: 'Show spending as friendly cards or bars: food, fun, travel, other.', twist: 'Let people tap a card to see the items inside it.', prompt: 'Help me build spending category cards for NovaPay with a colourful but accessible layout. Do not rely on colour alone.' },
+      { icon: '👨‍👩‍👧', title: 'Pocket money manager', level: 'mid', who: 'A parent and a child sharing chores and pocket money', what: 'Tick off chores to earn pocket money. The child sees their balance grow.', twist: 'Add a “save half, spend half” choice.', prompt: 'Help me build a pocket money page for NovaPay where chores earn money and the child chooses how much to save. Keep it child friendly.' },
+      { icon: '🍕', title: 'Bill splitter', level: 'start', who: 'Friends sharing a meal or a trip', what: 'Enter a total and number of people, and see who owes what.', twist: 'Add an unequal split, e.g. “I only had a drink”.', prompt: 'Help me build a bill splitter for NovaPay that handles equal and unequal splits and rounds money properly.' },
+      { icon: '🏠', title: 'Loan repayment calculator', level: 'stretch', who: 'Someone thinking about borrowing for the first time', what: 'Show monthly repayments and total cost for different loan lengths.', twist: 'Show how paying a bit extra each month changes the total.', prompt: 'Help me build a loan repayment calculator for NovaPay. Explain the maths in plain English and show total interest paid.' },
+      { icon: '🚨', title: 'Fraud alert simulator', level: 'stretch', who: 'Someone who wants to feel safe', what: 'Flag unusual payments with simple rules (big amount, strange time, new place) and explain why.', twist: 'Let the user say “that was me” or “that was not me”.', prompt: 'Help me build a pretend fraud alert page for NovaPay that flags unusual payments using simple rules and explains the reason in plain English.' },
+      { icon: '♿', title: 'Accessibility settings panel', level: 'mid', who: 'Anyone who finds banking pages hard to read', what: 'Buttons for bigger text, high contrast and calmer colours that change the whole page.', twist: 'Remember the choice when the page reloads.', prompt: 'Help me build an accessibility settings panel for NovaPay with bigger text, high contrast and reduced motion, plus keyboard support.' },
+      { icon: '🎓', title: 'Money explainer for teens', level: 'start', who: 'A teenager opening their first account', what: 'Short friendly cards that explain words like interest, overdraft and direct debit.', twist: 'Add a one-question quiz after each card.', prompt: 'Help me build a money explainer for teenagers on NovaPay with short cards and a tiny quiz. Use simple words and no jargon.' },
+      { icon: '🔔', title: 'Friendly payment reminders', level: 'mid', who: 'Someone who forgets bills', what: 'List upcoming payments and show which are due soon.', twist: 'Make the reminder kind, not scary.', prompt: 'Help me build a payment reminder page for NovaPay that sorts bills by due date and highlights the next one, without relying on colour only.' },
+      { icon: '🌱', title: 'Green spending score', level: 'stretch', who: 'Someone who cares about the planet', what: 'Give pretend purchases a simple “impact” score and suggest a greener choice.', twist: 'Show a weekly streak of better choices.', prompt: 'Help me build a pretend green spending score for NovaPay with a simple, fair scoring rule I can explain.' }
+    ];
+
+    const labels = { start: 'Good first build', mid: 'A bit more logic', stretch: 'Stretch' };
+    const grid = document.getElementById('grid');
+    const statusEl = document.getElementById('status');
+    let filter = 'all';
+
+    function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+    function render() {
+      grid.innerHTML = ideas.map((idea, i) => ({ idea, i })).filter(({ idea }) => filter === 'all' || idea.level === filter).map(({ idea, i }) => `
+        <article class="idea" id="idea-${i}" aria-labelledby="t-${i}">
+          <div class="icon" aria-hidden="true">${idea.icon}</div>
+          <h3 id="t-${i}">${esc(idea.title)}</h3>
+          <div class="tags"><span class="tag ${idea.level}">${labels[idea.level]}</span></div>
+          <dl>
+            <dt>Who is it for?</dt><dd>${esc(idea.who)}</dd>
+            <dt>What does it do?</dt><dd>${esc(idea.what)}</dd>
+            <dt>Add a twist</dt><dd>${esc(idea.twist)}</dd>
+          </dl>
+          <div class="prompt"><strong>Starter prompt:</strong> ${esc(idea.prompt)}</div>
+          <button type="button" class="copy" data-i="${i}">Copy starter prompt</button>
+        </article>`).join('');
+    }
+
+    document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      statusEl.textContent = '';
+      render();
+    }));
+
+    document.getElementById('surprise').addEventListener('click', () => {
+      filter = 'all';
+      document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.filter === 'all')));
+      render();
+      const i = Math.floor(Math.random() * ideas.length);
+      const el = document.getElementById('idea-' + i);
+      el.classList.add('highlight');
+      el.scrollIntoView({ block: 'center' });
+      statusEl.textContent = 'How about: ' + ideas[i].title + '?';
+    });
+
+    grid.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.copy');
+      if (!btn) return;
+      const text = ideas[Number(btn.dataset.i)].prompt;
+      try { await navigator.clipboard.writeText(text); statusEl.textContent = 'Prompt copied. Now open the persona wizard.'; }
+      catch (err) { statusEl.textContent = 'Could not copy automatically. Select the prompt text and copy it.'; }
+    });
+
+    render();
+  </script>
+</body>
+</html>

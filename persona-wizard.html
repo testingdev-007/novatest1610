@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaPay Persona Wizard</title>
+  <style>
+    :root {
+      --bg: #f4f5f9;
+      --panel: rgba(255,255,255,0.86);
+      --card: #ffffff;
+      --ink: #1a1d29;
+      --text: #374151;
+      --muted: #5b6270;
+      --border: #d8dce6;
+      --accent: #5a50e0;
+      --accent-2: #1d6fa8;
+      --tint: #eeedfb;
+      --good: #0f8a5f;
+      --shadow: 0 18px 40px rgba(26, 29, 41, 0.1);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(90,80,224,0.13), transparent 30%),
+        radial-gradient(circle at top right, rgba(29,111,168,0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      padding: 28px 16px 44px;
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 1240px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #11152a 0%, #1f2350 55%, #5a50e0 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: auto -40px -70px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #d7d4ff;
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      max-width: 14ch;
+      margin-bottom: 14px;
+    }
+
+    .lede {
+      max-width: 68ch;
+      color: rgba(255,255,255,0.88);
+      font-size: 1.05rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel, .preview {
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(216,220,230,0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 20px; }
+    .preview { padding: 20px; position: sticky; top: 16px; }
+
+    .section-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .stepper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .step {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef1fb;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid rgba(90, 80, 224, 0.1);
+    }
+
+    .step.active {
+      background: var(--tint);
+      color: var(--accent);
+    }
+
+    .step.done {
+      background: rgba(15,138,95,0.12);
+      color: var(--good);
+    }
+
+    .wizard {
+      display: grid;
+      gap: 16px;
+    }
+
+    .step-card {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .step-card.active { display: block; }
+
+    .step-card h2 {
+      color: var(--ink);
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .help {
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(90,80,224,0.12);
+    }
+
+    .persona-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .persona-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .persona-card header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .persona-card h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--tint);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary { background: var(--accent); color: white; }
+    .secondary { background: #eef1fb; color: var(--ink); }
+    .ghost { background: transparent; color: var(--accent); border: 2px solid rgba(90,80,224,0.18); }
+
+    .preview-block {
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .preview-block h3 {
+      color: var(--ink);
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font: 0.9rem/1.5 ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+      color: #243044;
+    }
+
+    .export {
+      display: grid;
+      gap: 10px;
+    }
+
+    .export textarea {
+      min-height: 240px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+      font-size: 0.88rem;
+    }
+
+    .notice {
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview { position: static; }
+    }
+
+    @media (max-width: 720px) {
+      .hero, .panel, .preview { padding: 16px; }
+      .grid, .split { grid-template-columns: 1fr; }
+      .stepper { gap: 8px; }
+      .step { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="wizard-title">
+      <div class="eyebrow">NovaPay copilot persona builder</div>
+      <h1 id="wizard-title">Turn student research into a reusable persona prompt</h1>
+      <p class="lede">
+        Rosie and her friends can use this wizard to define one or more personas, then export a
+        clean prompt for build work, review work, or both. The output is designed to paste into
+        Copilot chats, issue notes, or lesson docs.
+      </p>
+    </section>
+
+    <section class="layout">
+      <section class="panel" aria-labelledby="builder-title">
+        <div class="section-title" id="builder-title">Wizard</div>
+        <div class="stepper" id="stepper" aria-label="wizard steps"></div>
+
+        <div class="wizard">
+          <section class="step-card active" data-step="0">
+            <h2>1. Set the project context</h2>
+            <p class="help">Start with the feature and the teaching goal.</p>
+            <div class="grid">
+              <div class="field full">
+                <label for="featureName">Feature / page name</label>
+                <input id="featureName" value="NovaPay" />
+              </div>
+              <div class="field full">
+                <label for="featureGoal">What are students making?</label>
+                <textarea id="featureGoal" placeholder="Example: a feature page for a pocket money tracker">a feature page for a pocket money tracker</textarea>
+              </div>
+              <div class="field">
+                <label for="stage">Stage</label>
+                <select id="stage">
+                  <option>Build</option>
+                  <option>Review</option>
+                  <option>Build + Review</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="tone">Copilot tone</label>
+                <select id="tone">
+                  <option>Friendly and practical</option>
+                  <option>Strict and thorough</option>
+                  <option>Supportive and reflective</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-card" data-step="1">
+            <h2>2. Describe the first persona</h2>
+            <p class="help">Capture the person, their context, and the problem they need solved.</p>
+            <div class="grid">
+              <div class="field">
+                <label for="personaName">Persona name</label>
+                <input id="personaName" value="Rosie" />
+              </div>
+              <div class="field">
+                <label for="personaAge">Age / year group</label>
+                <input id="personaAge" value="12 / Year 8" />
+              </div>
+              <div class="field full">
+                <label for="personaContext">Context</label>
+                <textarea id="personaContext" placeholder="Who is this person and how will they use the feature?">Very strong in IT, working with friends on a classroom build/review task.</textarea>
+              </div>
+              <div class="field full">
+                <label for="personaNeed">Need / goal</label>
+                <textarea id="personaNeed">A clear, accessible feature that is easy to understand, test, and improve with Copilot.</textarea>
+              </div>
+              <div class="field full">
+                <label for="personaPain">Pain points / constraints</label>
+                <textarea id="personaPain">Does not want hidden bugs, confusing instructions, or inaccessible controls. Needs clues in the UI and console.</textarea>
+              </div>
+              <div class="field full">
+                <label for="personaFocus">Review focus</label>
+                <textarea id="personaFocus">Check whether the work suits the persona, whether the flow is fair, and whether the page is usable on keyboard and mobile.</textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-card" data-step="2">
+            <h2>3. Add more personas if needed</h2>
+            <p class="help">Multiple personas can be entered one by one and included in the same export.</p>
+            <div class="grid">
+              <div class="field">
+                <label for="extraName">Persona name</label>
+                <input id="extraName" placeholder="Optional additional persona" />
+              </div>
+              <div class="field">
+                <label for="extraPriority">Priority</label>
+                <select id="extraPriority">
+                  <option>Primary</option>
+                  <option>Secondary</option>
+                  <option>Stretch</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="extraDetails">Details</label>
+                <textarea id="extraDetails" placeholder="Who else should be considered?"></textarea>
+              </div>
+              <div class="field full">
+                <label for="extraNeed">Need / goal</label>
+                <textarea id="extraNeed" placeholder="What should Copilot keep in mind for this person?"></textarea>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="addPersonaBtn" type="button">Add persona</button>
+              <button class="ghost" id="clearExtraBtn" type="button">Clear extra persona fields</button>
+            </div>
+          </section>
+
+          <section class="step-card" data-step="3">
+            <h2>4. Review and export</h2>
+            <p class="help">Use the generated text as the brief for build and review stages in Copilot.</p>
+            <div class="export">
+              <textarea id="exportText" aria-label="generated persona export"></textarea>
+              <div class="actions">
+                <button class="primary" id="copyBtn" type="button">Copy export text</button>
+                <button class="secondary" id="downloadBtn" type="button">Download .md</button>
+                <button class="ghost" id="resetBtn" type="button">Reset wizard</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" id="backBtn" type="button">Back</button>
+          <button class="primary" id="nextBtn" type="button">Next</button>
+        </div>
+        <p class="notice">Tip: the export is intentionally markdown-friendly so it can be pasted into Copilot chats, pull requests, or classroom notes.</p>
+      </section>
+
+      <aside class="preview" aria-labelledby="preview-title">
+        <div class="section-title" id="preview-title">Live preview</div>
+        <div class="preview-block">
+          <h3>Persona summary</h3>
+          <pre id="summaryPreview"></pre>
+        </div>
+        <div class="preview-block">
+          <h3>Build prompt</h3>
+          <pre id="buildPreview"></pre>
+        </div>
+        <div class="preview-block">
+          <h3>Review prompt</h3>
+          <pre id="reviewPreview"></pre>
+        </div>
+        <div class="preview-block">
+          <h3>Added personas</h3>
+          <div id="personaCards" class="persona-list"></div>
+        </div>
+        <p class="small">This preview updates as the fields change, so students can see how their persona turns into a prompt before copying it.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      'Context',
+      'Primary persona',
+      'Extra personas',
+      'Export',
+    ];
+
+    const state = {
+      personas: [],
+      step: 0,
+    };
+
+    const ids = [
+      'featureName', 'featureGoal', 'stage', 'tone',
+      'personaName', 'personaAge', 'personaContext', 'personaNeed', 'personaPain', 'personaFocus',
+      'extraName', 'extraPriority', 'extraDetails', 'extraNeed',
+    ];
+
+    const els = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
+    const stepCards = [...document.querySelectorAll('.step-card')];
+    const stepper = document.getElementById('stepper');
+    const exportText = document.getElementById('exportText');
+    const summaryPreview = document.getElementById('summaryPreview');
+    const buildPreview = document.getElementById('buildPreview');
+    const reviewPreview = document.getElementById('reviewPreview');
+    const personaCards = document.getElementById('personaCards');
+
+    function value(id) { return (els[id]?.value || '').trim(); }
+
+    function currentPersona() {
+      return {
+        name: value('personaName') || 'Persona 1',
+        age: value('personaAge') || 'Unknown',
+        context: value('personaContext') || 'No context entered yet.',
+        need: value('personaNeed') || 'No goal entered yet.',
+        pain: value('personaPain') || 'No constraints entered yet.',
+        focus: value('personaFocus') || 'No review focus entered yet.',
+        priority: 'Primary',
+      };
+    }
+
+    function buildPersonaBlock(persona, index) {
+      return [
+        `## Persona ${index + 1}: ${persona.name}`,
+        `- Age / year group: ${persona.age}`,
+        `- Priority: ${persona.priority}`,
+        `- Context: ${persona.context}`,
+        `- Need / goal: ${persona.need}`,
+        `- Pain points / constraints: ${persona.pain}`,
+        `- Review focus: ${persona.focus}`,
+      ].join('\n');
+    }
+
+    function buildExport() {
+      const featureName = value('featureName') || 'NovaPay feature';
+      const featureGoal = value('featureGoal') || 'a student-built feature';
+      const stage = value('stage');
+      const tone = value('tone');
+      const primary = currentPersona();
+      const allPersonas = [primary, ...state.personas.filter(p => p.name !== primary.name || p.need !== primary.need)];
+
+      const markdown = [
+        `# Persona brief — ${featureName}`,
+        '',
+        `**Feature:** ${featureGoal}`,
+        `**Stage:** ${stage}`,
+        `**Copilot tone:** ${tone}`,
+        '',
+        '## Personas',
+        ...allPersonas.map((persona, index) => ['', buildPersonaBlock(persona, index)].join('\n')),
+        '',
+        '## Build prompt for Copilot',
+        `Use the personas above to design and build ${featureName}. Make sure the work suits the people described, especially their goals, constraints, and accessibility needs.`,
+        '',
+        '## Review prompt for Copilot',
+        `Review the finished ${featureName} against the personas above. Check whether the page is fair, usable, accessible, and helpful for the intended users. Explain any gaps and suggest improvements.`,
+        '',
+        '## Feedback export',
+        `Feature: ${featureName}\nStage: ${stage}\nPrimary persona: ${primary.name}\nImportant considerations: ${primary.need}; ${primary.pain}; ${primary.focus}`,
+      ].join('\n');
+
+      exportText.value = markdown;
+      summaryPreview.textContent = `${featureName}\n${featureGoal}\n${allPersonas.length} persona(s)\n${tone}`;
+      buildPreview.textContent = `Build ${featureName} for the personas below:\n\n${allPersonas.map((p, i) => buildPersonaBlock(p, i)).join('\n\n')}`;
+      reviewPreview.textContent = `Review ${featureName} against the personas below:\n\n${allPersonas.map((p, i) => `${i + 1}. ${p.name} — ${p.focus}`).join('\n')}`;
+      renderPersonaCards(allPersonas);
+      updateStepper();
+    }
+
+    function renderPersonaCards(personas) {
+      personaCards.innerHTML = '';
+      personas.forEach((persona, index) => {
+        const card = document.createElement('article');
+        card.className = 'persona-card';
+        card.innerHTML = `
+          <header>
+            <div>
+              <h3>${index === 0 ? 'Primary persona' : `Persona ${index + 1}`}: ${escapeHtml(persona.name)}</h3>
+              <p class="small">${escapeHtml(persona.age)}</p>
+            </div>
+            <span class="pill">${escapeHtml(persona.priority || 'Primary')}</span>
+          </header>
+          <p><strong>Context:</strong> ${escapeHtml(persona.context)}</p>
+          <p><strong>Need:</strong> ${escapeHtml(persona.need)}</p>
+          <p><strong>Focus:</strong> ${escapeHtml(persona.focus)}</p>
+        `;
+        personaCards.appendChild(card);
+      });
+    }
+
+    function updateStepper() {
+      stepCards.forEach((card, index) => card.classList.toggle('active', index === state.step));
+      stepper.innerHTML = '';
+      steps.forEach((label, index) => {
+        const el = document.createElement('div');
+        el.className = 'step' + (index === state.step ? ' active' : index < state.step ? ' done' : '');
+        el.textContent = `${index + 1}. ${label}`;
+        stepper.appendChild(el);
+      });
+      document.getElementById('backBtn').disabled = state.step === 0;
+      document.getElementById('nextBtn').textContent = state.step === stepCards.length - 1 ? 'Finish' : 'Next';
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function addPersona() {
+      const name = value('extraName');
+      const details = value('extraDetails');
+      const need = value('extraNeed');
+      if (!name && !details && !need) return;
+      state.personas.push({
+        name: name || `Persona ${state.personas.length + 2}`,
+        age: 'Additional persona',
+        context: details || 'No extra context entered.',
+        need: need || 'No extra need entered.',
+        pain: 'Use the same core accessibility and fairness rules.',
+        focus: 'Treat this as an extra lens for design and review.',
+        priority: value('extraPriority') || 'Secondary',
+      });
+      clearExtra();
+      buildExport();
+    }
+
+    function clearExtra() {
+      els.extraName.value = '';
+      els.extraDetails.value = '';
+      els.extraNeed.value = '';
+      els.extraPriority.value = 'Primary';
+    }
+
+    function resetWizard() {
+      state.personas = [];
+      els.featureName.value = 'NovaPay';
+      els.featureGoal.value = 'a feature page for a pocket money tracker';
+      els.stage.value = 'Build + Review';
+      els.tone.value = 'Friendly and practical';
+      els.personaName.value = 'Rosie';
+      els.personaAge.value = '12 / Year 8';
+      els.personaContext.value = 'Very strong in IT, working with friends on a classroom build/review task.';
+      els.personaNeed.value = 'A clear, accessible feature that is easy to understand, test, and improve with Copilot.';
+      els.personaPain.value = 'Does not want hidden bugs, confusing instructions, or inaccessible controls. Needs clues in the UI and console.';
+      els.personaFocus.value = 'Check whether the work suits the persona, whether the flow is fair, and whether the page is usable on keyboard and mobile.';
+      clearExtra();
+      state.step = 0;
+      buildExport();
+    }
+
+    async function copyExport() {
+      await navigator.clipboard.writeText(exportText.value);
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => (btn.textContent = old), 1200);
+    }
+
+    function downloadMarkdown() {
+      const blob = new Blob([exportText.value], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'novapay-persona-brief.md';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('addPersonaBtn').addEventListener('click', addPersona);
+    document.getElementById('clearExtraBtn').addEventListener('click', clearExtra);
+    document.getElementById('resetBtn').addEventListener('click', resetWizard);
+    document.getElementById('copyBtn').addEventListener('click', copyExport);
+    document.getElementById('downloadBtn').addEventListener('click', downloadMarkdown);
+    document.getElementById('backBtn').addEventListener('click', () => {
+      state.step = Math.max(0, state.step - 1);
+      updateStepper();
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      state.step = Math.min(stepCards.length - 1, state.step + 1);
+      if (state.step === stepCards.length - 1) buildExport();
+      updateStepper();
+    });
+
+    ids.forEach((id) => {
+      els[id]?.addEventListener('input', buildExport);
+      els[id]?.addEventListener('change', buildExport);
+    });
+
+    resetWizard();
+  </script>
+</body>
+</html>
