@@ -39,7 +39,7 @@
       --accent:       #6C63FF;
       --accent-light: #EEEEFF;
       --text:         #0D0F1C;
-      --muted:        #A9AFC0;
+      --muted:        #5B6275; /* darkened for WCAG AA contrast */
       --border:       #E8ECF2;
       --debit:        #FF4757;
       --credit:       #00C896;
@@ -88,7 +88,11 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8em;
       cursor: pointer;
+      transition: background .15s, transform .15s;
     }
+    .icon-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .icon-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .icon-btn[aria-expanded="true"] { background: var(--accent); color: white; }
 
     .avatar {
       width: 36px; height: 36px;
@@ -153,7 +157,7 @@
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: #0F1340;
+      color: #FFFFFF;
       margin-bottom: 24px;
       font-variant-numeric: tabular-nums;
       position: relative; z-index: 1;
@@ -313,7 +317,10 @@
       color: var(--text);
       background: var(--bg);
       outline: none;
+      transition: border-color .15s, box-shadow .15s;
     }
+    input:hover { border-color: #C9CEDD; }
+    input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.3); }
 
     .btn {
       display: block;
@@ -327,12 +334,16 @@
       letter-spacing: 0.02em;
       background: var(--accent);
       color: white;
-      cursor: default;
+      cursor: pointer;
+      transition: filter .15s, transform .15s;
     }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
 
     .btn-ghost {
       background: var(--accent-light);
-      color: var(--accent);
+      color: #4A41D9;
     }
 
     /* ── ALERTS ─────────────────────────────── */
@@ -344,8 +355,8 @@
       font-weight: 500;
       display: none;
     }
-    .alert-ok  { background: #E6FAF3; color: #00804E; border: 1px solid #B0EDCF; }
-    .alert-err { background: #FFF0F1; color: #BF1030; border: 1px solid #FFB8C1; }
+    .alert-ok  { background: #E6FAF3; color: #006B42; border: 1px solid #B0EDCF; }
+    .alert-err { background: #FFF0F1; color: #A00D28; border: 1px solid #FFB8C1; }
 
     /* ── INTEREST RESULT ────────────────────── */
     .result-box {
@@ -374,6 +385,131 @@
     /* ── CALC GRID ─────��────────────────────── */
     /* MAKEOVER? Squash your browser window to phone width. What happens here? */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 520px) {
+      .two-col { grid-template-columns: 1fr; gap: 0; }
+      .app-header { padding: 0 14px; }
+      .balance-amount { font-size: 2.4em; }
+    }
+
+    /* ── TOASTS ─────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      top: 72px; right: 16px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(360px, calc(100vw - 32px));
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 12px 12px 14px;
+      border-radius: var(--r-sm);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      box-shadow: 0 8px 24px rgba(13,15,28,0.18);
+      font-size: 0.88em;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(24px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .toast.show { opacity: 1; transform: translateX(0); }
+    .toast.hide { opacity: 0; transform: translateX(24px); }
+    .toast-icon { font-weight: 800; flex-shrink: 0; }
+    .toast-msg { flex: 1; line-height: 1.4; word-break: break-word; }
+    .toast-success { border-left-color: var(--credit); background: #E6FAF3; color: #006B42; }
+    .toast-error   { border-left-color: var(--debit);  background: #FFF0F1; color: #A00D28; }
+    .toast-info    { border-left-color: var(--accent); background: var(--accent-light); color: #2E2799; }
+    .toast-close {
+      border: none; background: transparent; color: inherit;
+      width: 26px; height: 26px; border-radius: 50%;
+      font-size: 1.1em; line-height: 1; cursor: pointer; flex-shrink: 0;
+    }
+    .toast-close:hover { background: rgba(13,15,28,0.1); }
+    .toast-close:focus-visible { outline: 3px solid var(--text); outline-offset: 1px; }
+    @media (max-width: 520px) {
+      .toast-container { top: 68px; right: 12px; left: 12px; width: auto; }
+    }
+
+    /* ── CHAT SIDEBAR ───────────────────────── */
+    .chat-sidebar {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(380px, 100vw);
+      z-index: 900;
+      background: var(--card);
+      box-shadow: -8px 0 32px rgba(13,15,28,0.2);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(105%);
+      visibility: hidden;
+      transition: transform .3s ease, visibility 0s linear .3s;
+    }
+    .chat-sidebar.open {
+      transform: translateX(0);
+      visibility: visible;
+      transition: transform .3s ease, visibility 0s;
+    }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, var(--hero-from), var(--hero-to));
+      color: white;
+    }
+    .chat-title { font-size: 1em; font-weight: 700; }
+    .chat-header .icon-btn { background: rgba(255,255,255,0.15); color: white; }
+    .chat-header .icon-btn:hover { background: rgba(255,255,255,0.3); }
+    .chat-header .icon-btn:focus-visible { outline-color: white; }
+    .chat-messages {
+      flex: 1; overflow-y: auto;
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      background: var(--bg);
+    }
+    .chat-msg {
+      max-width: 88%;
+      padding: 10px 13px;
+      border-radius: 14px;
+      font-size: 0.88em;
+      line-height: 1.45;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+    .chat-msg.bot  { align-self: flex-start; background: var(--card); box-shadow: var(--shadow); border-bottom-left-radius: 4px; }
+    .chat-msg.user { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+    .chat-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .chip {
+      border: 1px solid var(--accent); background: var(--accent-light); color: #4A41D9;
+      border-radius: 100px; padding: 6px 12px;
+      font: inherit; font-size: 0.78em; font-weight: 600; cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .chip:hover { background: var(--accent); color: white; }
+    .chip:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+    .chat-form {
+      display: flex; gap: 8px;
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-form input { padding: 10px 12px; flex: 1; min-width: 0; }
+    .chat-form .btn { width: auto; padding: 10px 16px; }
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .toast, .chat-sidebar, .chat-sidebar.open { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -382,8 +518,9 @@
     <div class="app-logo">nova<span>pay</span></div>
     <div class="header-actions">
       <!-- MAKEOVER? What would a screen reader say about these buttons? -->
-      <button class="icon-btn">🔔</button>
-      <button class="icon-btn">⚙️</button>
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <button class="icon-btn" aria-label="Settings">⚙️</button>
+      <button class="icon-btn" id="chat-toggle" aria-label="Open Nova Assistant chat" aria-expanded="false" aria-controls="chat-sidebar">💬</button>
       <div class="avatar">AC</div>
     </div>
   </header>
@@ -398,7 +535,7 @@
         <div class="account-name">Alex Chen · Current Account</div>
         <div class="account-pill">•••• 4821</div>
       </div>
-
+    </div>
 
     <!-- Money in / out summary -->
     <div class="stats-row">
@@ -468,15 +605,15 @@
         <label class="field-label" for="withdraw-amount">Amount</label>
         <div class="input-wrap">
           <span class="input-prefix">£</span>
-          <input type="text" id="withdraw-amount" placeholder="0.00">
+          <input type="text" inputmode="decimal" id="withdraw-amount" placeholder="0.00">
         </div>
       </div>
 
-      <button class="btn" onlick="makeWithdrawal()">Withdraw</button>
+      <button class="btn" onclick="makeWithdrawal()">Withdraw</button>
 
       <!-- MAKEOVER? Do these messages work for someone who can't see colour? -->
-      <div class="alert alert-ok"  id="wd-success"></div>
-      <div class="alert alert-err" id="wd-error"></div>
+      <div class="alert alert-ok"  id="wd-success" role="status"></div>
+      <div class="alert alert-err" id="wd-error" role="alert"></div>
     </div>
 
     <div class="card">
@@ -487,24 +624,24 @@
 
       <div class="two-col">
         <div class="field">
-          <label class="field-label">Amount</label>
+          <label class="field-label" for="int-amount">Amount</label>
           <div class="input-wrap">
             <span class="input-prefix">£</span>
-            <input type="number" id="int-amount" placeholder="1000">
+            <input type="number" id="int-amount" placeholder="1000" min="0" step="any">
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Interest Rate</label>
+          <label class="field-label" for="int-rate">Interest Rate</label>
           <div class="input-wrap">
             <span class="input-prefix">%</span>
-            <input type="number" id="int-rate" placeholder="4.5">
+            <input type="number" id="int-rate" placeholder="4.5" min="0" step="any">
           </div>
         </div>
       </div>
 
       <button class="btn btn-ghost" onclick="calculateInterest()">Calculate</button>
 
-      <div class="result-box" id="int-result-box">
+      <div class="result-box" id="int-result-box" aria-live="polite">
         <div class="result-eyebrow">Interest earned over 12 months</div>
         <div class="result-figure" id="int-result-figure"></div>
       </div>
@@ -512,9 +649,81 @@
 
   </main>
 
+  <!-- Toast container (live region for announcements) -->
+  <div class="toast-container" id="toast-container" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Chat sidebar: Nova Assistant -->
+  <aside class="chat-sidebar" id="chat-sidebar" role="complementary" aria-labelledby="chat-title">
+    <div class="chat-header">
+      <h2 class="chat-title" id="chat-title">Nova Assistant</h2>
+      <button class="icon-btn" id="chat-close" type="button" aria-label="Close Nova Assistant chat">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages" tabindex="0"></div>
+    <div class="chat-chips" role="group" aria-label="Quick actions">
+      <button class="chip" type="button" data-prompt="Show withdrawal tips">Show withdrawal tips</button>
+      <button class="chip" type="button" data-prompt="Explain interest formula">Explain interest formula</button>
+      <button class="chip" type="button" data-prompt="How to avoid input errors?">How to avoid input errors?</button>
+    </div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <label class="visually-hidden" for="chat-input">Ask Nova Assistant a question</label>
+      <input type="text" id="chat-input" placeholder="Ask about this page…">
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </aside>
+
   <script>
     let balance = 1250;
 
+    /* ── TOASTS ─────────────────────────────── */
+    const TOAST_DURATION = 4000;
+    const TOAST_ICONS = { success: "✓", error: "!", info: "i" };
+
+    function showToast(message, type) {
+      type = TOAST_ICONS[type] ? type : "info";
+      const container = document.getElementById("toast-container");
+
+      const toast = document.createElement("div");
+      toast.className = "toast toast-" + type;
+      // errors interrupt (assertive), others are polite
+      toast.setAttribute("role", type === "error" ? "alert" : "status");
+
+      const icon = document.createElement("span");
+      icon.className = "toast-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = TOAST_ICONS[type];
+
+      const msg = document.createElement("span");
+      msg.className = "toast-msg";
+      msg.textContent = message;
+
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "toast-close";
+      close.setAttribute("aria-label", "Dismiss notification");
+      close.textContent = "×";
+
+      toast.append(icon, msg, close);
+      container.appendChild(toast);
+      requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add("show")));
+
+      let timer = setTimeout(dismiss, TOAST_DURATION);
+      function dismiss() {
+        clearTimeout(timer);
+        if (toast.dataset.closing) return;
+        toast.dataset.closing = "1";
+        toast.classList.remove("show");
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 300);
+      }
+      close.addEventListener("click", dismiss);
+      // pause auto-dismiss while hovering/focused so keyboard users can reach the button
+      toast.addEventListener("mouseenter", () => clearTimeout(timer));
+      toast.addEventListener("focusin", () => clearTimeout(timer));
+      toast.addEventListener("mouseleave", () => { timer = setTimeout(dismiss, TOAST_DURATION); });
+      return toast;
+    }
+
+    /* ── WITHDRAWAL ─────────────────────────── */
     function makeWithdrawal() {
       const successEl = document.getElementById("wd-success");
       const errorEl   = document.getElementById("wd-error");
@@ -522,30 +731,152 @@
       successEl.style.display = "none";
       errorEl.style.display   = "none";
 
-      const amount = parseFloat(document.getElementById("withdraw-amount").value);
+      function fail(msg) {
+        errorEl.style.display = "block";
+        errorEl.textContent   = "Error: " + msg;
+        showToast(msg, "error");
+      }
 
-      // Update the balance
-      balance = balance + amount;
+      const raw = document.getElementById("withdraw-amount").value.trim();
+      if (raw === "") return fail("Please enter an amount to withdraw.");
 
-      // Show the new balance on the hero card
-      document.getElementById("balence-display").textContent =
+      const amount = Number(raw);
+      if (isNaN(amount)) return fail("Amount must be a number, like 25 or 12.50.");
+      if (amount <= 0) return fail("Amount must be greater than £0.");
+      if (amount > balance) return fail("You can't withdraw more than your balance of £" + balance.toFixed(2) + ".");
+
+      balance = balance - amount;
+
+      document.getElementById("balance-display").textContent =
         "£" + balance.toFixed(2);
 
-      successEl.style.display  = "block";
-      successEl.textContent    =
-        "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
+      const msg = "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
+      successEl.style.display = "block";
+      successEl.textContent   = "Success: " + msg;
+      document.getElementById("withdraw-amount").value = "";
+      showToast(msg, "success");
     }
 
+    /* ── INTEREST ───────────────────────────── */
     function calculateInterest() {
-      const principal = parseFloat(document.getElementById("int-amount").value);
-      const rate      = parseFloat(document.getElementById("int-rate").value);
+      const rawP = document.getElementById("int-amount").value.trim();
+      const rawR = document.getElementById("int-rate").value.trim();
+      const box  = document.getElementById("int-result-box");
 
-      const interest = principal * rate * 12;
+      function fail(msg) {
+        box.style.display = "none";
+        showToast(msg, "error");
+      }
 
-      const box = document.getElementById("int-result-box");
+      if (rawP === "" || rawR === "") return fail("Please fill in both the amount and the interest rate.");
+      const principal = Number(rawP);
+      const rate      = Number(rawR);
+      if (isNaN(principal) || isNaN(rate)) return fail("Amount and rate must be numbers.");
+      if (principal < 0 || rate < 0) return fail("Amount and rate can't be negative.");
+
+      // annual simple interest over 12 months
+      const interest = principal * (rate / 100);
+
       box.style.display = "block";
       document.getElementById("int-result-figure").textContent =
         "£" + interest.toFixed(2);
+      showToast("£" + principal.toFixed(2) + " at " + rate + "% earns £" + interest.toFixed(2) + " over 12 months.", "success");
+    }
+
+    /* ── CHAT ASSISTANT ─────────────────────── */
+    const chatSidebar = document.getElementById("chat-sidebar");
+    const chatToggle  = document.getElementById("chat-toggle");
+    const chatClose   = document.getElementById("chat-close");
+    const chatLog     = document.getElementById("chat-messages");
+    const chatForm    = document.getElementById("chat-form");
+    const chatInput   = document.getElementById("chat-input");
+
+    const REPLIES = {
+      withdraw: "Withdrawal tips:\n• Type a plain number like 25 or 12.50 (no £ sign).\n• It must be more than 0 and no more than your balance.\n• Press Withdraw and check the new balance at the top.",
+      interest: "The calculator uses simple annual interest:\ninterest = amount × (rate ÷ 100)\nExample: £1,000 at 4.5% earns £45.00 over 12 months. Enter the rate as a percentage, not a decimal.",
+      error:    "To avoid input errors:\n• Don't leave fields empty.\n• Use numbers only (digits and one decimal point).\n• Don't use negative values or 0 for withdrawals.\n• Don't withdraw more than your balance.",
+      balance:  () => "Your current balance is £" + balance.toFixed(2) + ". It updates at the top of the page after every successful withdrawal.",
+      tips:     "Quick tips:\n• Try a small withdrawal first.\n• Use the interest calculator to compare rates.\n• Watch for the pop-up notifications — they tell you what worked or what to fix.\n• Ask me about withdrawals, interest, errors or your balance."
+    };
+    const INTENTS = [
+      ["error",    /error|invalid|wrong|fail|not working|mistake/],
+      ["withdraw", /withdraw|take out|cash/],
+      ["interest", /interest|rate|calculat|formula|earn/],
+      ["balance",  /balance|how much/],
+      ["tips",     /tip|hint|help|advice|hello|hi\b/]
+    ];
+    const FALLBACK = "I'm not sure about that one yet. Try asking about withdrawals, interest, errors, your balance, or tips — or tap a quick action below.";
+
+    function getReply(text) {
+      const t = text.toLowerCase();
+      for (const [key, re] of INTENTS) {
+        if (re.test(t)) {
+          const r = REPLIES[key];
+          return typeof r === "function" ? r() : r;
+        }
+      }
+      return FALLBACK;
+    }
+
+    // Chat history kept for this browser session
+    let chatHistory = [];
+    try { chatHistory = JSON.parse(sessionStorage.getItem("nova-chat") || "[]"); } catch (e) {}
+    if (!Array.isArray(chatHistory)) chatHistory = [];
+
+    function renderMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = "chat-msg " + role;
+      div.textContent = text;
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function addMessage(role, text) {
+      chatHistory.push({ role, text });
+      try { sessionStorage.setItem("nova-chat", JSON.stringify(chatHistory)); } catch (e) {}
+      renderMessage(role, text);
+    }
+
+    function sendChat(text) {
+      text = text.trim();
+      if (!text) return;
+      addMessage("user", text);
+      addMessage("bot", getReply(text));
+    }
+
+    function openChat() {
+      chatSidebar.classList.add("open");
+      chatToggle.setAttribute("aria-expanded", "true");
+      chatToggle.setAttribute("aria-label", "Close Nova Assistant chat");
+      chatInput.focus();
+    }
+    function closeChat() {
+      chatSidebar.classList.remove("open");
+      chatToggle.setAttribute("aria-expanded", "false");
+      chatToggle.setAttribute("aria-label", "Open Nova Assistant chat");
+      chatToggle.focus();
+    }
+
+    chatToggle.addEventListener("click", () =>
+      chatSidebar.classList.contains("open") ? closeChat() : openChat());
+    chatClose.addEventListener("click", closeChat);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && chatSidebar.classList.contains("open")) closeChat();
+    });
+    chatForm.addEventListener("submit", (e) => {   // Enter key submits the form
+      e.preventDefault();
+      sendChat(chatInput.value);
+      chatInput.value = "";
+      chatInput.focus();
+    });
+    document.querySelectorAll(".chip").forEach((chip) =>
+      chip.addEventListener("click", () => sendChat(chip.dataset.prompt)));
+
+    // Load history, or greet with preloaded hints
+    if (chatHistory.length) {
+      chatHistory.forEach((m) => renderMessage(m.role, m.text));
+    } else {
+      addMessage("bot", "Hi, I'm Nova! I can help with this page.\n• Withdrawals: enter a number up to your balance.\n• Interest: amount × (rate ÷ 100).\nTap a quick action or ask me a question.");
     }
   </script>
 
