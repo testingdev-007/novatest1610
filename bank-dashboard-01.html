@@ -382,7 +382,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* ── CALC GRID ─────��────────────────────── */
+    /* ── CALC GRID ──────────────────────────── */
     /* MAKEOVER? Squash your browser window to phone width. What happens here? */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 520px) {
@@ -674,6 +674,15 @@
   <script>
     let balance = 1250;
 
+    function formatGBP(amount) {
+      return "£" + Number(amount).toLocaleString("en-GB", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    document.getElementById("balance-display").textContent = formatGBP(balance);
+
     /* ── TOASTS ─────────────────────────────── */
     const TOAST_DURATION = 4000;
     const TOAST_ICONS = { success: "✓", error: "!", info: "i" };
@@ -743,14 +752,13 @@
       const amount = Number(raw);
       if (isNaN(amount)) return fail("Amount must be a number, like 25 or 12.50.");
       if (amount <= 0) return fail("Amount must be greater than £0.");
-      if (amount > balance) return fail("You can't withdraw more than your balance of £" + balance.toFixed(2) + ".");
+      if (amount > balance) return fail("You can't withdraw more than your balance of " + formatGBP(balance) + ".");
 
       balance = balance - amount;
 
-      document.getElementById("balance-display").textContent =
-        "£" + balance.toFixed(2);
+      document.getElementById("balance-display").textContent = formatGBP(balance);
 
-      const msg = "Withdrawn £" + amount.toFixed(2) + ". New balance: £" + balance.toFixed(2);
+      const msg = "Withdrawn " + formatGBP(amount) + ". New balance: " + formatGBP(balance);
       successEl.style.display = "block";
       successEl.textContent   = "Success: " + msg;
       document.getElementById("withdraw-amount").value = "";
@@ -792,11 +800,11 @@
     const chatInput   = document.getElementById("chat-input");
 
     const REPLIES = {
-      withdraw: "Withdrawal tips:\n• Type a plain number like 25 or 12.50 (no £ sign).\n• It must be more than 0 and no more than your balance.\n• Press Withdraw and check the new balance at the top.",
+      withdraw: "Withdrawal tips:\n• Type a plain number like 25 or 12.50 (no £ sign).\n• It must be more than 0 and no more than your balance.\n• Press Withdraw and check the new balance at the top of the page.",
       interest: "The calculator uses simple annual interest:\ninterest = amount × (rate ÷ 100)\nExample: £1,000 at 4.5% earns £45.00 over 12 months. Enter the rate as a percentage, not a decimal.",
-      error:    "To avoid input errors:\n• Don't leave fields empty.\n• Use numbers only (digits and one decimal point).\n• Don't use negative values or 0 for withdrawals.\n• Don't withdraw more than your balance.",
-      balance:  () => "Your current balance is £" + balance.toFixed(2) + ". It updates at the top of the page after every successful withdrawal.",
-      tips:     "Quick tips:\n• Try a small withdrawal first.\n• Use the interest calculator to compare rates.\n• Watch for the pop-up notifications — they tell you what worked or what to fix.\n• Ask me about withdrawals, interest, errors or your balance."
+      error:    "To avoid input errors:\n• Don't leave fields empty.\n• Use numbers only (digits and one decimal point).\n• Don't use negative values or 0 for withdrawals.\n• Don't withdraw more than your current balance.",
+      balance:  () => "Your current balance is " + formatGBP(balance) + ". It updates at the top of the page after every successful withdrawal.",
+      tips:     "Quick tips:\n• Try a small withdrawal first.\n• Use the interest calculator to compare rates.\n• Watch for the pop-up notifications — they tell you what worked or what to fix."
     };
     const INTENTS = [
       ["error",    /error|invalid|wrong|fail|not working|mistake/],
