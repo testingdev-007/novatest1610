@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NovaPay — Empty Feature Template</title>
+  <title>NovaPay — Savings Pots</title>
   <style>
     :root {
       --bg: #f4f5f9;
@@ -13,7 +13,10 @@
       --muted: #5b6270;
       --border: #d8dce6;
       --accent: #5a50e0;
-      --tint: #eeedfb;
+      --accent-2: #7c73ff;
+      --good: #1f9d66;
+      --warn: #b45309;
+      --danger: #b91c1c;
       --shadow: 0 12px 30px rgba(26, 29, 41, 0.08);
       --radius: 20px;
     }
@@ -24,25 +27,26 @@
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 45%, #edf0f7 100%);
       color: var(--text);
-      line-height: 1.5;
-      padding: 32px 16px 48px;
+      line-height: 1.45;
+      padding: 28px 14px 44px;
     }
 
     .shell {
       max-width: 1120px;
       margin: 0 auto;
+      display: grid;
+      gap: 16px;
     }
 
-    .hero, .panel {
+    .hero, .card {
       background: var(--card);
-      border: 1px solid rgba(216, 220, 230, 0.9);
+      border: 1px solid rgba(216, 220, 230, 0.92);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
 
     .hero {
-      padding: 28px;
-      margin-bottom: 18px;
+      padding: 24px;
       position: relative;
       overflow: hidden;
     }
@@ -50,179 +54,492 @@
     .hero::after {
       content: '';
       position: absolute;
-      inset: auto -80px -80px auto;
+      right: -72px;
+      bottom: -82px;
       width: 220px;
       height: 220px;
       border-radius: 50%;
-      background: rgba(90, 80, 224, 0.09);
+      background: rgba(90, 80, 224, 0.1);
+      pointer-events: none;
     }
 
     .eyebrow {
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       color: var(--accent);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     h1, h2, h3, p { margin: 0; }
 
     h1 {
-      font-size: clamp(2rem, 4vw, 3.3rem);
-      line-height: 1.05;
       color: var(--ink);
-      margin-bottom: 12px;
-      max-width: 14ch;
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      line-height: 1.08;
+      margin-bottom: 10px;
+      max-width: 15ch;
     }
 
     .lede {
-      max-width: 60ch;
-      font-size: 1.05rem;
+      max-width: 64ch;
       color: var(--text);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .hero-grid {
+    .hero-stats {
       display: grid;
+      gap: 10px;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 22px;
     }
 
     .stat {
-      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      background: linear-gradient(180deg, #fff 0%, #fafbff 100%);
+      border-radius: 14px;
+      padding: 14px;
     }
 
     .stat .label {
-      font-size: 0.78rem;
-      font-weight: 700;
       text-transform: uppercase;
+      font-size: 0.74rem;
       letter-spacing: 0.08em;
       color: var(--muted);
-      margin-bottom: 8px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
     .stat .value {
-      font-size: 1rem;
       color: var(--ink);
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
     }
 
-    .panel {
-      padding: 20px;
-    }
-
-    .placeholder {
-      border: 2px dashed var(--border);
-      border-radius: 18px;
-      background: linear-gradient(180deg, #fcfcfe 0%, #f7f8fc 100%);
-      min-height: 420px;
+    .layout {
       display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 24px;
+      gap: 16px;
+      grid-template-columns: 360px minmax(0, 1fr);
+      align-items: start;
     }
 
-    .placeholder-inner {
-      max-width: 520px;
-    }
+    .card { padding: 18px; }
 
-    .placeholder h2 {
+    h2 {
       color: var(--ink);
-      margin-bottom: 8px;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
     }
 
-    .placeholder p {
+    .subtle {
       color: var(--muted);
-      margin-bottom: 18px;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
     }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
+    .form-grid {
+      display: grid;
       gap: 10px;
-      justify-content: center;
     }
 
-    .chip {
+    label {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, button {
+      font: inherit;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(124, 115, 255, 0.18);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .05s ease, box-shadow .2s ease;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(90, 80, 224, 0.28);
+    }
+
+    .btn-soft {
+      background: #f2f3f8;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: #fff1f2;
+      color: var(--danger);
+      border: 1px solid #fecdd3;
+    }
+
+    .error {
+      color: var(--danger);
+      font-size: 0.86rem;
+      min-height: 1.2em;
+    }
+
+    .pots {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pot {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: linear-gradient(180deg, #fff 0%, #fbfbfe 100%);
+      display: grid;
+      gap: 10px;
+    }
+
+    .pot-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .pot h3 {
+      color: var(--ink);
+      font-size: 1.04rem;
+      margin-bottom: 2px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .amounts {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--ink);
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: #eceff7;
+      overflow: hidden;
+      border: 1px solid #dde2ef;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3fb97f 0%, #239f69 100%);
+      transition: width .25s ease;
+    }
+
+    .tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
+      gap: 6px;
       border-radius: 999px;
-      background: var(--tint);
-      color: var(--accent);
+      font-size: 0.78rem;
+      padding: 5px 9px;
       font-weight: 700;
-      border: 1px solid rgba(90, 80, 224, 0.12);
+      border: 1px solid transparent;
     }
 
-    .footer-note {
-      margin-top: 14px;
-      font-size: 0.92rem;
+    .tag.ok {
+      color: var(--good);
+      background: #ecfdf3;
+      border-color: #bbf7d0;
+    }
+
+    .tag.warn {
+      color: var(--warn);
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .tag.done {
+      color: #0f766e;
+      background: #ecfeff;
+      border-color: #99f6e4;
+    }
+
+    .pot-actions {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pot-actions input {
+      min-width: 0;
+    }
+
+    .empty {
+      text-align: center;
       color: var(--muted);
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      background: #fcfcff;
     }
 
-    @media (max-width: 720px) {
-      .hero { padding: 22px; }
-      .hero-grid { grid-template-columns: 1fr; }
-      .panel { padding: 16px; }
-      .placeholder { min-height: 320px; }
+    @media (max-width: 940px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <main class="shell">
     <section class="hero" aria-labelledby="title">
-      <div class="eyebrow">NovaPay feature starter</div>
-      <h1 id="title">Blank canvas for a student-built feature</h1>
+      <div class="eyebrow">NovaPay smart saving</div>
+      <h1 id="title">Savings Pots</h1>
       <p class="lede">
-        This empty template is ready for a new NovaPay idea. Start here when a group is building
-        their own feature from scratch instead of fixing the existing exercise.
+        Create named savings goals, contribute money over time, and track progress as each pot moves toward its target.
       </p>
-      <div class="hero-grid">
-        <div class="stat">
-          <div class="label">Purpose</div>
-          <div class="value">A clean starting point</div>
-        </div>
-        <div class="stat">
-          <div class="label">Copilot use</div>
-          <div class="value">Ask, plan, build, review</div>
-        </div>
-        <div class="stat">
-          <div class="label">Persona support</div>
-          <div class="value">Designed to pair with the wizard</div>
-        </div>
+      <div class="hero-stats">
+        <article class="stat">
+          <div class="label">Total saved</div>
+          <div class="value" id="totalSaved">$0.00</div>
+        </article>
+        <article class="stat">
+          <div class="label">Total target</div>
+          <div class="value" id="totalTarget">$0.00</div>
+        </article>
+        <article class="stat">
+          <div class="label">Overall progress</div>
+          <div class="value" id="overallProgress">0%</div>
+        </article>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="placeholder">
-        <div class="placeholder-inner">
-          <h2>Insert your NovaPay feature here</h2>
-          <p>
-            Add a page title, layout, components, interactions, and whatever the students invent.
-            This file stays intentionally empty so the team can create their own experience without
-            having to delete any starter content first.
-          </p>
-          <div class="chips" aria-label="starter ideas">
-            <span class="chip">Dashboard</span>
-            <span class="chip">Savings tool</span>
-            <span class="chip">Payment flow</span>
-            <span class="chip">Support screen</span>
-            <span class="chip">Anything else</span>
+    <section class="layout">
+      <aside class="card" aria-labelledby="create-pot-title">
+        <h2 id="create-pot-title">Create a new pot</h2>
+        <p class="subtle">Add a goal, starting amount, and target amount.</p>
+
+        <form id="potForm" class="form-grid" novalidate>
+          <div>
+            <label for="potName">Pot name</label>
+            <input id="potName" name="potName" type="text" placeholder="e.g. Emergency Fund" maxlength="32" required />
           </div>
-          <p class="footer-note">
-            Tip: pair this page with a persona prompt so Copilot can review the work from a real
-            user’s point of view.
-          </p>
-        </div>
-      </div>
+
+          <div class="row">
+            <div>
+              <label for="potCurrent">Current amount ($)</label>
+              <input id="potCurrent" name="potCurrent" type="number" min="0" step="0.01" value="0" required />
+            </div>
+            <div>
+              <label for="potTarget">Target amount ($)</label>
+              <input id="potTarget" name="potTarget" type="number" min="0.01" step="0.01" placeholder="500" required />
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">Create pot</button>
+          <p id="formError" class="error" role="alert" aria-live="polite"></p>
+        </form>
+      </aside>
+
+      <section class="card" aria-labelledby="pots-title">
+        <h2 id="pots-title">Your pots</h2>
+        <p class="subtle">Add or withdraw funds and watch each goal progress.</p>
+
+        <div id="potsList" class="pots" aria-live="polite"></div>
+      </section>
     </section>
   </main>
+
+  <script>
+    const potForm = document.getElementById('potForm');
+    const potName = document.getElementById('potName');
+    const potCurrent = document.getElementById('potCurrent');
+    const potTarget = document.getElementById('potTarget');
+    const formError = document.getElementById('formError');
+
+    const totalSavedEl = document.getElementById('totalSaved');
+    const totalTargetEl = document.getElementById('totalTarget');
+    const overallProgressEl = document.getElementById('overallProgress');
+    const potsList = document.getElementById('potsList');
+
+    const formatMoney = (value) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+
+    const toMoney = (input) => {
+      const num = Number(input);
+      if (!Number.isFinite(num)) return NaN;
+      return Math.round(num * 100) / 100;
+    };
+
+    let pots = [
+      { id: crypto.randomUUID(), name: 'Emergency Fund', current: 420, target: 1000 },
+      { id: crypto.randomUUID(), name: 'New Laptop', current: 250, target: 1500 }
+    ];
+
+    function getStatus(current, target) {
+      const pct = target > 0 ? (current / target) * 100 : 0;
+      if (pct >= 100) return { className: 'done', text: 'Goal reached' };
+      if (pct >= 60) return { className: 'ok', text: 'On track' };
+      return { className: 'warn', text: 'Needs attention' };
+    }
+
+    function renderSummary() {
+      const totalSaved = pots.reduce((sum, pot) => sum + pot.current, 0);
+      const totalTarget = pots.reduce((sum, pot) => sum + pot.target, 0);
+      const progress = totalTarget > 0 ? Math.min(100, (totalSaved / totalTarget) * 100) : 0;
+
+      totalSavedEl.textContent = formatMoney(totalSaved);
+      totalTargetEl.textContent = formatMoney(totalTarget);
+      overallProgressEl.textContent = `${progress.toFixed(0)}%`;
+    }
+
+    function renderPots() {
+      if (!pots.length) {
+        potsList.innerHTML = `<div class="empty">No pots yet — create your first savings goal.</div>`;
+        renderSummary();
+        return;
+      }
+
+      potsList.innerHTML = pots.map((pot) => {
+        const pct = Math.max(0, Math.min(100, (pot.current / pot.target) * 100));
+        const status = getStatus(pot.current, pot.target);
+
+        return `
+          <article class="pot" data-id="${pot.id}">
+            <div class="pot-head">
+              <div>
+                <h3>${pot.name}</h3>
+                <p class="meta">Target ${formatMoney(pot.target)}</p>
+              </div>
+              <span class="tag ${status.className}">${status.text}</span>
+            </div>
+
+            <div class="amounts">
+              <span>Saved: <strong>${formatMoney(pot.current)}</strong></span>
+              <span>${pct.toFixed(0)}%</span>
+            </div>
+
+            <div class="progress" aria-label="${pot.name} progress">
+              <div class="bar" style="width: ${pct}%"></div>
+            </div>
+
+            <div class="pot-actions">
+              <input type="number" step="0.01" min="0" placeholder="Amount" data-action-input="${pot.id}" />
+              <button class="btn btn-soft" data-add="${pot.id}">Add</button>
+              <button class="btn btn-danger" data-withdraw="${pot.id}">Withdraw</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      renderSummary();
+    }
+
+    function setFormError(message = '') {
+      formError.textContent = message;
+    }
+
+    potForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      setFormError('');
+
+      const name = potName.value.trim();
+      const current = toMoney(potCurrent.value);
+      const target = toMoney(potTarget.value);
+
+      if (!name) {
+        setFormError('Please enter a pot name.');
+        return;
+      }
+
+      if (!Number.isFinite(current) || current < 0) {
+        setFormError('Current amount must be 0 or greater.');
+        return;
+      }
+
+      if (!Number.isFinite(target) || target <= 0) {
+        setFormError('Target amount must be greater than 0.');
+        return;
+      }
+
+      if (current > target) {
+        setFormError('Current amount cannot be greater than target amount.');
+        return;
+      }
+
+      pots.unshift({
+        id: crypto.randomUUID(),
+        name,
+        current,
+        target
+      });
+
+      potForm.reset();
+      potCurrent.value = '0';
+      renderPots();
+      potName.focus();
+    });
+
+    potsList.addEventListener('click', (event) => {
+      const addId = event.target.getAttribute('data-add');
+      const withdrawId = event.target.getAttribute('data-withdraw');
+      if (!addId && !withdrawId) return;
+
+      const id = addId || withdrawId;
+      const input = potsList.querySelector(`input[data-action-input="${id}"]`);
+      if (!input) return;
+
+      const amount = toMoney(input.value);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        input.focus();
+        return;
+      }
+
+      pots = pots.map((pot) => {
+        if (pot.id !== id) return pot;
+
+        if (addId) {
+          return { ...pot, current: Math.min(pot.target, toMoney(pot.current + amount)) };
+        }
+
+        return { ...pot, current: Math.max(0, toMoney(pot.current - amount)) };
+      });
+
+      input.value = '';
+      renderPots();
+    });
+
+    renderPots();
+  </script>
 </body>
 </html>
